@@ -1,0 +1,86 @@
+#include <stdlib.h>
+#include <stdio.h>
+#include <errno.h>
+#include <fcntl.h>
+#include <sys/mman.h>
+#include <string.h>
+#include <time.h>
+#include <unistd.h>
+#include "rpi.h"
+
+uint32_t *rpi_peripherals_base;
+uint32_t rpi_peripherals_size;
+uint32_t *rpi_peripherals;
+
+extern volatile rpi_gpio_t *rpi_gpio;
+extern volatile rpi_sys_timer_t *rpi_sys_timer;
+extern volatile rpi_pwm_t *rpi_pwm;
+static void *mapmem(const char *msg, size_t size, int fd, off_t off)
+{
+    void *map = mmap(NULL, size, (PROT_READ | PROT_WRITE), MAP_SHARED, fd, off);
+    if (map == MAP_FAILED)
+        fprintf(stderr, "rpi_init: %s mmap failed: %s\n", msg, strerror(errno));
+    return map;
+}
+static void unmapmem(void **pmem, size_t size)
+{
+    if (*pmem == MAP_FAILED) return;
+    munmap(*pmem, size);
+    *pmem = MAP_FAILED;
+}
+int rpi_init(void)
+{
+    int  memfd;
+    int  ok;
+    FILE *fp;
+
+    if ((fp = fopen("/proc/device-tree/soc/ranges" , "rb")))
+    {
+        unsigned char buf[4];
+        fseek(fp, 4, SEEK_SET);
+        if (fread(buf, 1, sizeof(buf), fp) == sizeof(buf))
+            rpi_peripherals_base = (uint32_t *)(buf[0] << 24 | buf[1] << 16 | buf[2] << 8 | buf[3] << 0);
+        fseek(fp, 8, SEEK_SET);
+        if (fread(buf, 1, sizeof(buf), fp) == sizeof(buf))
+            rpi_peripherals_size = (buf[0] << 24 | buf[1] << 16 | buf[2] << 8 | buf[3] << 0);
+        printf("rpi peripherals physical address:%p\n",(rpi_peripherals_base));
+        fclose(fp);
+    }
+
+    memfd = -1;
+    ok = -1;
+    if (geteuid() == 0) {
+        if ((memfd = open("/dev/mem", O_RDWR | O_SYNC) ) < 0)
+        {
+            fprintf(stderr, "rpi_init: Unable to open /dev/mem: %s\n",
+                    strerror(errno)) ;
+            goto exit;
+        }
+        rpi_peripherals = mapmem("gpio", rpi_peripherals_size, memfd, (uint32_t)rpi_peripherals_base);
+
+        if (rpi_peripherals == MAP_FAILED) goto exit;
+        rpi_gpio = (rpi_gpio_t*)(rpi_peripherals + RPI_GPIO_BASE/4);
+        rpi_sys_timer = (rpi_sys_timer_t*)(rpi_peripherals + RPI_SYS_TIMER/4);
+        rpi_pwm = (rpi_pwm_t*)(rpi_peripherals + RPI_PWM/4);
+        ok = 0;
+    }
+    else {
+        printf("Please run with sudo!\n");
+        return ok;
+    }
+
+  exit:
+    if (memfd >= 0)
+        close(memfd);
+
+    if (ok)
+        rpi_close();
+    return ok;
+}
+int rpi_close(void)
+{
+    unmapmem((void**) &rpi_peripherals, rpi_peripherals_size);
+    rpi_peripherals = MAP_FAILED;
+    rpi_gpio = MAP_FAILED;
+    return 0;
+}

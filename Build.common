@@ -1,0 +1,9 @@
+CC = echo "  $@" && arm-linux-gnueabi-gcc
+LD = echo "  [$(notdir $@)]" && arm-linux-gnueabi-gcc
+AR = echo "  [$(notdir $@)]" && arm-linux-gnueabi-ar
+
+%.o: %.c %.h $(HDEPS)
+	@$(CC) $(CFLAGS) -o $@ -c $(realpath $<) || exit 1
+
+%.o: %.c $(HDEPS)
+	@$(CC) $(CFLAGS) -o $@ -c $(realpath $<) || exit 1
