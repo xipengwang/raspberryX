@@ -4,7 +4,9 @@ common_src = [
     'mem_op.c',
     'print_util.c',
     'sort.c',
-    'time_util.c',]
+    'time_util.c',
+    'matrix.c',
+]
 
 common_lib = static_library(
     'common',
