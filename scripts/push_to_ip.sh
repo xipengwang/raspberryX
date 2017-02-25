@@ -1,7 +1,7 @@
 
 XROBOT=`dirname $0`/..
 IP=$1
-REMOTE_USER=pi
+REMOTE_USER=robotx
 
 echo "Pushing to robot $ROBOTID at $IP"
 
