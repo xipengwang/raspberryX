@@ -52,6 +52,8 @@ void matrix_sub_row_switch(matrix_t *a, int r_i, int r_j, int col0, int col1);
 void matrix_row_switch(matrix_t *a, int r_i, int r_j);
 matrix_plu_t* matrix_PLU(const matrix_t *a);
 matrix_t* matrix_PLU_solver(const matrix_plu_t *m_plu, const matrix_t *m);
+matrix_t* matrix_plu_inv(const matrix_plu_t *m_plu);
+matrix_t* matrix_inverse(const matrix_t *m);
 double matrix_det(const matrix_t *a);
 void matrix_print(const matrix_t *m, char *fmt);
 void matrix_destroy(matrix_t *m);

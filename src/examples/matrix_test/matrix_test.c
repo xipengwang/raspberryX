@@ -46,7 +46,16 @@ int main(int argc, char **args)
     matrix_print(m1, "%.2f, ");
     BREAK;
 
+    matrix_t *m_inv = matrix_inverse(m1);
+    matrix_print(m_inv, "%.2f, ");
+    BREAK;
+
+    /* matrix_t *m5 = matrix_mul(m1, m_inv); */
+    /* matrix_print(m5, "%.2f, "); */
+    /* BREAK; */
+
     matrix_plu_t *m_plu = matrix_PLU(m1);
+
     /* matrix_print(m_plu->P, "%.2f, "); */
     /* BREAK; */
     /* matrix_print(m_plu->L, "%.2f, "); */
@@ -72,5 +81,6 @@ int main(int argc, char **args)
     free(m_plu);
     matrix_destroy(m);
     matrix_destroy(m1);
+    matrix_destroy(m_inv);
     return 0;
 }

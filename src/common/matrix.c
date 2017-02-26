@@ -426,6 +426,51 @@ double matrix_det(const matrix_t *a)
     }
 }
 
+matrix_t* matrix_plu_inv(const matrix_plu_t *m_plu)
+{
+
+    matrix_t *m = matrix_create_identity(m_plu->P->nrows);
+    matrix_t *x = matrix_PLU_solver(m_plu, m);
+    matrix_destroy(m);
+    return x;
+}
+
+matrix_t* matrix_inverse(const matrix_t *a)
+{
+    assert(a);
+    assert(a->nrows == a->ncols);
+    matrix_t *m;
+    matrix_plu_t *m_plu;
+    switch(a->nrows) {
+
+        case 0:
+            assert(0);
+            break;
+
+        case 1:
+            if(!a->data[0])
+                return NULL;
+            m = matrix_create(1,1);
+            m->data[0] = 1/m->data[0];
+            return m;
+
+        case 2:
+            if(!(a->data[0] * a->data[3] - a->data[1] * a->data[2]))
+                return NULL;
+            m = matrix_create(2,2);
+            return m;
+
+        default:
+            m_plu = matrix_PLU(a);
+            m = matrix_plu_inv(m_plu);
+            matrix_destroy(m_plu->P);
+            matrix_destroy(m_plu->L);
+            matrix_destroy(m_plu->U);
+            free(m_plu);
+            return m;
+    }
+}
+
 void matrix_print(const matrix_t *m, char *fmt)
 {
     assert(m);
