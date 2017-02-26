@@ -33,7 +33,7 @@ matrix_t *matrix_create_data(int rows, int cols, const double *data)
     int k = 0;
     for (int i = 0; i < rows; i++) {
         for (int j = 0; j < cols; j++) {
-            MATRIX_EL(m, i, j) = data[k++];            
+            MATRIX_EL(m, i, j) = data[k++];
         }
     }
     return m;
@@ -46,7 +46,7 @@ matrix_t *matrix_create_identity(int dim)
     m->nrows = dim;
     m->ncols = dim;
     m->data = calloc(dim * dim, sizeof(double));
-    
+
     for (int i = 0; i < dim; i++) {
         MATRIX_EL(m, i, i) = 1;
     }
@@ -64,7 +64,7 @@ void matrix_put(matrix_t *m, int row, int col, double v)
 
 double matrix_get(const matrix_t *m, int row, int col)
 {
-    assert(m);    
+    assert(m);
     assert(m->nrows > row);
     assert(m->ncols > col);
     return MATRIX_EL(m, row, col);
@@ -88,18 +88,14 @@ int matrix_exact_equal(const matrix_t *a, const matrix_t *b)
     assert(a->ncols == b->ncols);
     assert(a->nrows == b->nrows);
 
-    matrix_t *m = calloc(1, sizeof(matrix_t));
-    m->nrows = a->ncols;
-    m->ncols = a->nrows;
-    m->data = calloc(m->nrows * m->ncols, sizeof(double));
-    for (int i = 0; i < m->nrows; i++) {
-        for (int j = 0; j < m->ncols; j++) {
+    for (int i = 0; i < a->nrows; i++) {
+        for (int j = 0; j < a->ncols; j++) {
             if(MATRIX_EL(a, i, j) != MATRIX_EL(b, i, j)) {
                 return -1;
             }
 
         }
-    }  
+    }
     return 0;
 }
 
@@ -110,27 +106,20 @@ int matrix_equal(const matrix_t *a, const matrix_t *b)
     assert(a->ncols == b->ncols);
     assert(a->nrows == b->nrows);
 
-    matrix_t *m = calloc(1, sizeof(matrix_t));
-    m->nrows = a->ncols;
-    m->ncols = a->nrows;
-    m->data = calloc(m->nrows * m->ncols, sizeof(double));
-    for (int i = 0; i < m->nrows; i++) {
-        for (int j = 0; j < m->ncols; j++) {
+    for (int i = 0; i < a->nrows; i++) {
+        for (int j = 0; j < a->ncols; j++) {
             if(fabs(MATRIX_EL(a, i, j) - MATRIX_EL(b, i, j)) > M_EPS) {
                 return -1;
             }
 
         }
-    }  
+    }
     return 0;
 }
 
 matrix_t* matrix_transpose(const matrix_t *_m)
 {
-    matrix_t *m = calloc(1, sizeof(matrix_t));
-    m->nrows = _m->ncols;
-    m->ncols = _m->nrows;
-    m->data = calloc(m->nrows * m->ncols, sizeof(double));
+    matrix_t *m = matrix_create(_m->nrows, _m->ncols);
     for (int i = 0; i < m->nrows; i++) {
         for (int j = 0; j < m->ncols; j++) {
             MATRIX_EL(m, i, j) = MATRIX_EL(_m, j, i);
@@ -148,7 +137,7 @@ void matrix_transpose_inplace(matrix_t *m)
         for (int j = 0; j < m->ncols; j++) {
             MATRIX_EL(m, i, j) = MATRIX_EL(_m, j, i);
         }
-    }    
+    }
     matrix_destroy(_m);
 }
 
@@ -159,10 +148,7 @@ matrix_t* matrix_add(const matrix_t *a, const matrix_t *b)
     assert(a->ncols == b->ncols);
     assert(a->nrows == b->nrows);
 
-    matrix_t *m = calloc(1, sizeof(matrix_t));
-    m->nrows = a->ncols;
-    m->ncols = a->nrows;
-    m->data = calloc(m->nrows * m->ncols, sizeof(double));
+    matrix_t *m = matrix_create(a->nrows, a->ncols);
     for (int i = 0; i < m->nrows; i++) {
         for (int j = 0; j < m->ncols; j++) {
             MATRIX_EL(m, i, j) = MATRIX_EL(a, i, j) + MATRIX_EL(b, i, j);
@@ -196,10 +182,7 @@ matrix_t* matrix_subtract(const matrix_t *a, const matrix_t *b)
     assert(a->ncols == b->ncols);
     assert(a->nrows == b->nrows);
 
-    matrix_t *m = calloc(1, sizeof(matrix_t));
-    m->nrows = a->ncols;
-    m->ncols = a->nrows;
-    m->data = calloc(m->nrows * m->ncols, sizeof(double));
+    matrix_t *m = matrix_create(a->nrows, a->ncols);
     for (int i = 0; i < m->nrows; i++) {
         for (int j = 0; j < m->ncols; j++) {
             MATRIX_EL(m, i, j) = MATRIX_EL(a, i, j) - MATRIX_EL(b, i, j);
@@ -232,10 +215,7 @@ matrix_t* matrix_mul(const matrix_t *a, const matrix_t *b)
     assert(b);
     assert(a->ncols == b->nrows);
 
-    matrix_t *m = calloc(1, sizeof(matrix_t));
-    m->nrows = a->nrows;
-    m->ncols = b->ncols;
-    m->data = calloc(m->nrows * m->ncols, sizeof(double));
+    matrix_t *m = matrix_create(a->nrows, b->ncols);
     for (int i = 0; i < m->nrows; i++) {
         for (int j = 0; j < m->ncols; j++) {
             double acc = 0.0;
@@ -272,7 +252,7 @@ void matrix_mul_inplace(matrix_t *a, const matrix_t *_b)
             MATRIX_EL(a, i, j) = acc;
         }
     }
-    matrix_destroy(m);    
+    matrix_destroy(m);
 }
 
 void matrix_sub_col_switch(matrix_t *a, int c_i, int c_j, int row0, int row1)
@@ -287,7 +267,7 @@ void matrix_sub_col_switch(matrix_t *a, int c_i, int c_j, int row0, int row1)
     assert(row0 <= row1);
     double tmp;
     for (int r = row0; r <= row1; r++) {
-        tmp = MATRIX_EL(a, r, c_i);        
+        tmp = MATRIX_EL(a, r, c_i);
         MATRIX_EL(a, r, c_i) = MATRIX_EL(a, r, c_j);
         MATRIX_EL(a, r, c_j) = tmp;
     }
@@ -310,7 +290,7 @@ void matrix_sub_row_switch(matrix_t *a, int r_i, int r_j, int col0, int col1)
     assert(col0 <=  col1);
     double tmp;
     for (int c = col0; c <= col1; c++) {
-        tmp = MATRIX_EL(a, r_i, c);        
+        tmp = MATRIX_EL(a, r_i, c);
         MATRIX_EL(a, r_i, c) = MATRIX_EL(a, r_j, c);
         MATRIX_EL(a, r_j, c) = tmp;
     }
@@ -320,7 +300,6 @@ void matrix_row_switch(matrix_t *a, int r_i, int r_j)
 {
     matrix_sub_row_switch(a, r_i, r_j, 0, a->ncols-1);
 }
-
 
 matrix_plu_t *matrix_PLU(const matrix_t *a)
 {
@@ -348,7 +327,7 @@ matrix_plu_t *matrix_PLU(const matrix_t *a)
             matrix_row_switch(m_plu->P, i, max_idx);
             if ( i > 0) {
                 matrix_sub_row_switch(m_plu->L, i, max_idx, 0, i-1);
-            }                
+            }
         }
 
         for (int j = i+1; j < a->nrows; j++) {
@@ -358,17 +337,60 @@ matrix_plu_t *matrix_PLU(const matrix_t *a)
                     MATRIX_EL(m_plu->U, j, k) - MATRIX_EL(m_plu->L, j, i) * MATRIX_EL(m_plu->U, i, i);
             }
         }
-        m_plu->det *= MATRIX_EL(m_plu->U, i, i);        
-    }    
-    m_plu->det *= MATRIX_EL(m_plu->U, (a->nrows-1), (a->nrows-1));    
+        m_plu->det *= MATRIX_EL(m_plu->U, i, i);
+    }
+    m_plu->det *= MATRIX_EL(m_plu->U, (a->nrows-1), (a->nrows-1));
     return m_plu;
 }
 
+matrix_t* matrix_PLU_solver(const matrix_plu_t *m_plu, const matrix_t *m)
+{
+    assert(m);
+    assert(m_plu);
+    assert(m->nrows == m_plu->P->nrows);
+
+    matrix_t *L = m_plu->L;
+    matrix_t *U = m_plu->U;
+    // Not a full rank matrix
+    if(m_plu->det == 0)
+        return NULL;
+
+    //permutation
+    matrix_t *s = matrix_mul(m_plu->P, m);
+
+    // LUx = s; Ly = s; Ux = y;
+    matrix_t *y = matrix_copy(s);
+    // forward substitution
+    for (int i = 0; i < m->ncols; i++) {
+        for (int j = 0; j < m->nrows; j++ ) {
+            for (int k = 0; k < j; k++) {
+                MATRIX_EL(y, j, i) =
+                    MATRIX_EL(s, j, i) - MATRIX_EL(y, k, i) * MATRIX_EL(L, j, k);
+            }
+            MATRIX_EL(y, j, i) /=  MATRIX_EL(L, j, j);
+        }
+    }
+    // backward substitution
+    matrix_t *x = matrix_copy(y);
+    for (int i = 0; i < m->ncols; i++) {
+        for (int j = m->nrows-1; j >= 0; j-- ) {
+            for (int k = m->nrows-1; k > j; k--) {
+                MATRIX_EL(x, j, i) =
+                    MATRIX_EL(y, j, i) - MATRIX_EL(x, k, i) * MATRIX_EL(U, j, k);
+            }
+            MATRIX_EL(x, j, i) /=  MATRIX_EL(U, j, j);
+        }
+    }
+    matrix_destroy(s);
+    matrix_destroy(y);
+    return x;
+
+}
 
 static double matrix_plu_det(const matrix_t *a)
 {
     matrix_plu_t *m = matrix_PLU(a);
-    double det = m->det;    
+    double det = m->det;
     matrix_destroy(m->P);
     matrix_destroy(m->U);
     matrix_destroy(m->L);
@@ -399,10 +421,56 @@ double matrix_det(const matrix_t *a)
                 - a->data[1]*a->data[3]*a->data[8]
                 + a->data[2]*a->data[3]*a->data[7]
                 - a->data[2]*a->data[4]*a->data[6];
-        default:           
+        default:
             return matrix_plu_det(a);
-    }    
+    }
 }
+
+matrix_t* matrix_plu_inv(const matrix_plu_t *m_plu)
+{
+
+    matrix_t *m = matrix_create_identity(m_plu->P->nrows);
+    matrix_t *x = matrix_PLU_solver(m_plu, m);
+    matrix_destroy(m);
+    return x;
+}
+
+matrix_t* matrix_inverse(const matrix_t *a)
+{
+    assert(a);
+    assert(a->nrows == a->ncols);
+    matrix_t *m;
+    matrix_plu_t *m_plu;
+    switch(a->nrows) {
+
+        case 0:
+            assert(0);
+            break;
+
+        case 1:
+            if(!a->data[0])
+                return NULL;
+            m = matrix_create(1,1);
+            m->data[0] = 1/m->data[0];
+            return m;
+
+        case 2:
+            if(!(a->data[0] * a->data[3] - a->data[1] * a->data[2]))
+                return NULL;
+            m = matrix_create(2,2);
+            return m;
+
+        default:
+            m_plu = matrix_PLU(a);
+            m = matrix_plu_inv(m_plu);
+            matrix_destroy(m_plu->P);
+            matrix_destroy(m_plu->L);
+            matrix_destroy(m_plu->U);
+            free(m_plu);
+            return m;
+    }
+}
+
 void matrix_print(const matrix_t *m, char *fmt)
 {
     assert(m);
@@ -420,5 +488,5 @@ void matrix_destroy(matrix_t *m)
     if(!m)
         return;
     free(m->data);
-    free(m);    
+    free(m);
 }
