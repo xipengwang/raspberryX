@@ -8,37 +8,33 @@
 #include "common/time_util.h"
 #include "common/matrix.h"
 
-#define BREAK printf("\n");
+#define BREAK printf("\n")
+
 int main(int argc, char **args)
 {
     print_marker("XRobot","Hello World!");
-    print_marker("XRobot","Test for matrix operations!");    
-
+    print_marker("XRobot","Test for matrix operations!");
 
     double data[] = {1.2, 1.4, 1.6, 1.8, 1.9, 2.0};
 
     matrix_t *m = matrix_create_data(2, 3, data);
     /* matrix_print(m, "%.2f, "); */
     /* BREAK; */
-  
-    matrix_transpose_inplace(m);
-    /* matrix_print(m, "%.2f, "); */
-    /* BREAK; */
 
-    matrix_subtract_inplace(m, m);
-    /* matrix_print(m, "%.2f, "); */
-    /* BREAK; */
+    matrix_transpose_inplace(m);
+    matrix_print(m, "%.2f, ");
+    BREAK;
 
     matrix_t *m1 = matrix_create_identity(3);
     /* matrix_print(m1, "%.2f, "); */
     /* BREAK; */
 
 
-    matrix_add_inplace(m1, m1);
+    /* matrix_add_inplace(m1, m1); */
     /* matrix_print(m1, "%.2f, "); */
     /* BREAK; */
 
-    matrix_mul_inplace(m1, m1);
+    /* matrix_mul_inplace(m1, m1); */
     /* matrix_print(m1, "%.2f, "); */
     /* BREAK; */
 
@@ -47,26 +43,33 @@ int main(int argc, char **args)
     /* BREAK; */
 
     matrix_col_switch(m1, 1, 2);
-    /* matrix_print(m1, "%.2f, "); */
-    /* BREAK; */
+    matrix_print(m1, "%.2f, ");
+    BREAK;
 
-    matrix_plu_t *m2 = matrix_PLU(m1);
-    matrix_print(m2->P, "%.2f, ");
+    matrix_plu_t *m_plu = matrix_PLU(m1);
+    /* matrix_print(m_plu->P, "%.2f, "); */
+    /* BREAK; */
+    /* matrix_print(m_plu->L, "%.2f, "); */
+    /* BREAK; */
+    /* matrix_print(m_plu->U, "%.2f, "); */
+    /* BREAK; */
+    /* matrix_t *m3 = matrix_mul(m_plu->L, m_plu->U); */
+    /* matrix_t *m4 = matrix_mul(m_plu->P, m1); */
+    /* if(!matrix_equal(m3,m4)) */
+    /*     printf("Yeah! :) %f \n", m_plu->det); */
+    /* else */
+    /*     puts(":("); */
+
+    //PLU solver test
+    matrix_t *x = matrix_PLU_solver(m_plu, m);
+    matrix_print(x, "%.2f, ");
     BREAK;
-    matrix_print(m2->L, "%.2f, ");
-    BREAK;
-    matrix_print(m2->U, "%.2f, ");
-    BREAK;
-    matrix_t *m3 = matrix_mul(m2->L, m2->U);
-    matrix_t *m4 = matrix_mul(m2->P, m1);
-    if(!matrix_equal(m3,m4))
-        printf("Yeah! :) %f \n", m2->det);
-    else
-        puts(":(");
-    matrix_destroy(m2->P);
-    matrix_destroy(m2->L);
-    matrix_destroy(m2->U);
-    free(m2);
+
+    matrix_destroy(x);
+    matrix_destroy(m_plu->P);
+    matrix_destroy(m_plu->L);
+    matrix_destroy(m_plu->U);
+    free(m_plu);
     matrix_destroy(m);
     matrix_destroy(m1);
     return 0;
