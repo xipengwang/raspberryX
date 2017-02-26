@@ -301,6 +301,17 @@ void matrix_row_switch(matrix_t *a, int r_i, int r_j)
     matrix_sub_row_switch(a, r_i, r_j, 0, a->ncols-1);
 }
 
+//householder
+matrix_qr_t *matrix_QR(const matrix_t *a)
+{
+    assert(0);
+}
+
+matrix_t* matrix_QR_solver(const matrix_qr_t *m_qr, const matrix_t *m)
+{
+    assert(0);
+}
+
 matrix_plu_t *matrix_PLU(const matrix_t *a)
 {
     assert(a);

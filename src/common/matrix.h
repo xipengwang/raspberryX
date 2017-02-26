@@ -10,7 +10,6 @@ extern "C" {
         unsigned int nrows, ncols;
         double *data;
     };
-
     typedef struct matrix matrix_t;
 
     struct matrix_plu
@@ -20,8 +19,14 @@ extern "C" {
         matrix_t *U;
         double det;
     };
-
     typedef struct matrix_plu matrix_plu_t;
+
+    struct matrix_qr
+    {
+        matrix_t *Q;
+        matrix_t *R;
+    };
+    typedef struct matrix_qr matrix_qr_t;
 
 #ifdef __cplusplus
 }
@@ -51,6 +56,8 @@ void matrix_col_switch(matrix_t *a, int c_i, int c_j);
 void matrix_sub_row_switch(matrix_t *a, int r_i, int r_j, int col0, int col1);
 void matrix_row_switch(matrix_t *a, int r_i, int r_j);
 matrix_plu_t* matrix_PLU(const matrix_t *a);
+matrix_qr_t *matrix_QR(const matrix_t *a);
+matrix_t* matrix_QR_solver(const matrix_qr_t *m_qr, const matrix_t *m);
 matrix_t* matrix_PLU_solver(const matrix_plu_t *m_plu, const matrix_t *m);
 matrix_t* matrix_plu_inv(const matrix_plu_t *m_plu);
 matrix_t* matrix_inverse(const matrix_t *m);
