@@ -88,12 +88,8 @@ int matrix_exact_equal(const matrix_t *a, const matrix_t *b)
     assert(a->ncols == b->ncols);
     assert(a->nrows == b->nrows);
 
-    matrix_t *m = calloc(1, sizeof(matrix_t));
-    m->nrows = a->ncols;
-    m->ncols = a->nrows;
-    m->data = calloc(m->nrows * m->ncols, sizeof(double));
-    for (int i = 0; i < m->nrows; i++) {
-        for (int j = 0; j < m->ncols; j++) {
+    for (int i = 0; i < a->nrows; i++) {
+        for (int j = 0; j < a->ncols; j++) {
             if(MATRIX_EL(a, i, j) != MATRIX_EL(b, i, j)) {
                 return -1;
             }
@@ -110,12 +106,8 @@ int matrix_equal(const matrix_t *a, const matrix_t *b)
     assert(a->ncols == b->ncols);
     assert(a->nrows == b->nrows);
 
-    matrix_t *m = calloc(1, sizeof(matrix_t));
-    m->nrows = a->ncols;
-    m->ncols = a->nrows;
-    m->data = calloc(m->nrows * m->ncols, sizeof(double));
-    for (int i = 0; i < m->nrows; i++) {
-        for (int j = 0; j < m->ncols; j++) {
+    for (int i = 0; i < a->nrows; i++) {
+        for (int j = 0; j < a->ncols; j++) {
             if(fabs(MATRIX_EL(a, i, j) - MATRIX_EL(b, i, j)) > M_EPS) {
                 return -1;
             }
@@ -127,10 +119,7 @@ int matrix_equal(const matrix_t *a, const matrix_t *b)
 
 matrix_t* matrix_transpose(const matrix_t *_m)
 {
-    matrix_t *m = calloc(1, sizeof(matrix_t));
-    m->nrows = _m->ncols;
-    m->ncols = _m->nrows;
-    m->data = calloc(m->nrows * m->ncols, sizeof(double));
+    matrix_t *m = matrix_create(_m->nrows, _m->ncols);
     for (int i = 0; i < m->nrows; i++) {
         for (int j = 0; j < m->ncols; j++) {
             MATRIX_EL(m, i, j) = MATRIX_EL(_m, j, i);
@@ -159,10 +148,7 @@ matrix_t* matrix_add(const matrix_t *a, const matrix_t *b)
     assert(a->ncols == b->ncols);
     assert(a->nrows == b->nrows);
 
-    matrix_t *m = calloc(1, sizeof(matrix_t));
-    m->nrows = a->ncols;
-    m->ncols = a->nrows;
-    m->data = calloc(m->nrows * m->ncols, sizeof(double));
+    matrix_t *m = matrix_create(a->nrows, a->ncols);
     for (int i = 0; i < m->nrows; i++) {
         for (int j = 0; j < m->ncols; j++) {
             MATRIX_EL(m, i, j) = MATRIX_EL(a, i, j) + MATRIX_EL(b, i, j);
@@ -196,10 +182,7 @@ matrix_t* matrix_subtract(const matrix_t *a, const matrix_t *b)
     assert(a->ncols == b->ncols);
     assert(a->nrows == b->nrows);
 
-    matrix_t *m = calloc(1, sizeof(matrix_t));
-    m->nrows = a->ncols;
-    m->ncols = a->nrows;
-    m->data = calloc(m->nrows * m->ncols, sizeof(double));
+    matrix_t *m = matrix_create(a->nrows, a->ncols);
     for (int i = 0; i < m->nrows; i++) {
         for (int j = 0; j < m->ncols; j++) {
             MATRIX_EL(m, i, j) = MATRIX_EL(a, i, j) - MATRIX_EL(b, i, j);
@@ -232,10 +215,7 @@ matrix_t* matrix_mul(const matrix_t *a, const matrix_t *b)
     assert(b);
     assert(a->ncols == b->nrows);
 
-    matrix_t *m = calloc(1, sizeof(matrix_t));
-    m->nrows = a->nrows;
-    m->ncols = b->ncols;
-    m->data = calloc(m->nrows * m->ncols, sizeof(double));
+    matrix_t *m = matrix_create(a->nrows, b->ncols);
     for (int i = 0; i < m->nrows; i++) {
         for (int j = 0; j < m->ncols; j++) {
             double acc = 0.0;
