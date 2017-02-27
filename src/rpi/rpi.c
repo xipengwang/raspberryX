@@ -39,7 +39,10 @@ int rpi_init(void)
         unsigned char buf[4];
         fseek(fp, 4, SEEK_SET);
         if (fread(buf, 1, sizeof(buf), fp) == sizeof(buf))
-            rpi_peripherals_base = (uint32_t *)(buf[0] << 24 | buf[1] << 16 | buf[2] << 8 | buf[3] << 0);
+            rpi_peripherals_base = (uint32_t *)(intptr_t)(buf[0] << 24
+                                                          | buf[1] << 16
+                                                          | buf[2] << 8
+                                                          | buf[3] << 0);
         fseek(fp, 8, SEEK_SET);
         if (fread(buf, 1, sizeof(buf), fp) == sizeof(buf))
             rpi_peripherals_size = (buf[0] << 24 | buf[1] << 16 | buf[2] << 8 | buf[3] << 0);
@@ -56,7 +59,10 @@ int rpi_init(void)
                     strerror(errno)) ;
             goto exit;
         }
-        rpi_peripherals = mapmem("gpio", rpi_peripherals_size, memfd, (uint32_t)rpi_peripherals_base);
+        rpi_peripherals = mapmem("gpio",
+                                 rpi_peripherals_size,
+                                 memfd,
+                                 (uint32_t)(intptr_t)rpi_peripherals_base);
 
         if (rpi_peripherals == MAP_FAILED) goto exit;
         rpi_gpio = (rpi_gpio_t*)(rpi_peripherals + RPI_GPIO_BASE/4);
