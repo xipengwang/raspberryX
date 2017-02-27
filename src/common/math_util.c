@@ -131,10 +131,87 @@ void quat_to_rpy_cov(const double quat[4], double rpy[3],
         }
     }
     for (int i = 0; i < 6; i++) {
-        for (int j = 0; j < 7; j++) {
+        for (int j = 0; j < 6; j++) {
             for (int k = 0; k < 7; k++) {
                 cov_rpy[i][j] += tmp[i][k] * J[j][k]; //J'[k][j] = J[j][k]
             }
         }
     }
+}
+
+void rpy_to_T44(const double rpy_xyz[6], double T44[4][4])
+{
+
+    T44[0][3] = rpy_xyz[3];
+    T44[1][3] = rpy_xyz[4];
+    T44[2][3] = rpy_xyz[5];
+    T44[3][3] = 1;
+
+    double c_r = cos(rpy_xyz[0]);
+    double c_p = cos(rpy_xyz[1]);
+    double c_y = cos(rpy_xyz[2]);
+
+    double s_r = sin(rpy_xyz[0]);
+    double s_p = sin(rpy_xyz[1]);
+    double s_y = sin(rpy_xyz[2]);
+
+    T44[0][0] = c_y*c_p;
+    T44[0][1] = c_y*s_p*s_r - s_y*c_r;
+    T44[0][2] = c_y*s_p*c_r + s_y*s_r;
+    T44[1][0] = s_y*c_p;
+    T44[1][1] = s_y*s_p*s_r + c_y*c_r;
+    T44[1][2] = s_y*s_p*c_r - c_y*s_r;
+    T44[2][0] = -s_p;
+    T44[2][1] = c_p*s_r;
+    T44[2][2] = c_p*c_r;
+}
+
+void rpy_to_T44_cov(const double rpy_xyz[6], double T44[4][4],
+                    const double cov_rpy[6][6], double cov_T44[4][4])
+{
+    assert(0);
+    double J[4][6] = {0};
+    //TODO: Need to calculate Jacobian: T44 with respect to rpy
+
+    //J * cov_rpy * J'
+    double tmp[4][6] = {0};
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 6; j++) {
+            for (int k = 0; k < 6; k++) {
+                tmp[i][j] += J[i][k] * cov_rpy[k][j];
+            }
+        }
+    }
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+            for (int k = 0; k < 6; k++) {
+                cov_T44[i][j] += tmp[i][k] * J[j][k]; //J'[k][j] = J[j][k]
+            }
+        }
+    }
+}
+
+void T44_to_rpy(const double T44[4][4], double rpy_xyz[6])
+{
+    rpy_xyz[3] = T44[0][3];
+    rpy_xyz[4] = T44[1][3];
+    rpy_xyz[5] = T44[2][3];
+
+    double p = atan2(T44[2][0], sqrt(T44[0][0]*T44[0][0] + T44[1][0]*T44[1][0]));
+    double r, y;
+    if (fabs(p - M_PI/2) < M_EPSILON) {
+        // 90 degree
+        r = 0;
+        y = atan2(T44[1][2], T44[0][2]);
+    } else if (fabs(p + M_PI/2) < M_EPSILON) {
+        // -90 degree
+        r = 0;
+        y = atan2(-T44[1][2], -T44[0][2]);
+    } else {
+        y = atan2(T44[1][0], T44[0][0]);
+        r = atan2(T44[2][1], T44[2][2]);
+    }
+    rpy_xyz[0] = r;
+    rpy_xyz[1] = p;
+    rpy_xyz[2] = y;
 }
