@@ -26,6 +26,8 @@ extern "C" {
 #define max(A, B) (A < B ? B : A)
 #define min(A, B) (A < B ? A : B)
 
+#define M_EPSILON 1E-8
+
     // random number between [0, 1)
     static inline float randf()
     {
@@ -49,6 +51,11 @@ extern "C" {
     {
         return mod2pi(mod2pi(va) - mod2pi(vb));
     }
+
+    void rpy_to_quat(const double rpy[3], double quat[4]);
+    void quat_to_rpy(const double quat[4], double rpy[3]);
+    void rpy_to_T44(const double rpy_xyz[6], double T44[4][4]);
+    void T44_to_rpy(const double T44[4][4], double rpy_xyz[6]);
 
 #ifdef __cplusplus
 }
