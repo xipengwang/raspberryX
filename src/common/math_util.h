@@ -26,6 +26,8 @@ extern "C" {
 #define max(A, B) (A < B ? B : A)
 #define min(A, B) (A < B ? A : B)
 
+#define M_EPSILON 1E-8
+
     // random number between [0, 1)
     static inline float randf()
     {
