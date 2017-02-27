@@ -2,6 +2,7 @@
 #define _RPI_PWM_H
 
 #include "rpi.h"
+#include "gpio.h"
 typedef enum{
     RPI_PWM_CTL_PWEN1 = 1,
     RPI_PWM_CTL_MODE1 = 1<<1,
@@ -38,7 +39,7 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-void pwm_init(uint8_t channel, uint8_t markspace, uint8_t enable);
+void pwm_init(uint8_t channel, Rpi_Gpio_Pin PWM_PIN, uint8_t markspace, uint8_t enable);
 
 void pwm_set_clock(uint32_t divider);
 
