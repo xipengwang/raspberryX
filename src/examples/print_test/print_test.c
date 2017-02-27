@@ -6,7 +6,7 @@
 
 #include "common/print_util.h"
 #include "common/time_util.h"
-#include "rpi/rpi.h"
+#include "rpi/rpi_all.h"
 
 #define pin_out PIN_07
 #define pin_in PIN_08
