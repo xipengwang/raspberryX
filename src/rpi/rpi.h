@@ -1,11 +1,12 @@
 #ifndef _RPI_H
 #define _RPI_H
 
+#include <sys/mman.h>
+#include <string.h>
+#include <time.h>
+#include <unistd.h>
 #include "common/std_util.h"
 #include "common/mem_op.h"
-#include "gpio.h"
-#include "systimer.h"
-#include "pwm.h"
 
 #define RPI_VERSION 10000
 
@@ -17,7 +18,9 @@
 #define RPI_GPIO_BASE          0x200000
 #define RPI_SYS_TIMER          0x3000
 #define RPI_PWM                0x20C000
-
+#define RPI_I2C0               0x205000
+#define RPI_I2C1               0x804000
+#define RPI_I2C2               0x805000
 
 
 #ifdef __cplusplus

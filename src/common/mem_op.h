@@ -6,6 +6,7 @@
 
 // Define MEM_BitMarks
 #define BITMASK_7 0x80
+#define BITMASK_7 0x80
 #define BITMASK_6 0x40
 #define BITMASK_5 0x20
 #define BITMASK_4 0x10
