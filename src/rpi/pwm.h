@@ -14,7 +14,6 @@ typedef struct {
     uint32_t RNG2;
     uint32_t DAT2;
 } rpi_pwm_t;
-volatile rpi_pwm_t *rpi_pwm;
 
 #ifdef __cplusplus
 extern "C" {
