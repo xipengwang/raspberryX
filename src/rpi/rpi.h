@@ -6,6 +6,7 @@
 #include "gpio.h"
 #include "systimer.h"
 #include "pwm.h"
+#include "i2c.h"
 
 #define RPI_VERSION 10000
 
