@@ -1,6 +1,6 @@
 #include "pwm.h"
 volatile rpi_pwm_t *rpi_pwm;
-
+volatile rpi_pwm_clk_t* rpi_pwm_clk;
 
 void pwm_init(uint8_t channel, Rpi_Gpio_Pin PWM_PIN, uint8_t markspace, uint8_t enable)
 {
@@ -54,8 +54,8 @@ void pwm_set_data(uint8_t channel, uint32_t data){
     }
 }
 
-
-
+void pwm_exit(Rpi_Gpio_Pin PWM_PIN){
+}
 
 
 

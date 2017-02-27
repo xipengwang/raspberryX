@@ -36,6 +36,10 @@ typedef struct {
     uint32_t DAT2;
 } rpi_pwm_t;
 
+typedef struct{
+    uint32_t DATA;
+} rpi_pwm_clk_t;
+
 #ifdef __cplusplus
 extern "C" {
 #endif
