@@ -17,6 +17,10 @@ int main(int argc, char **args)
         print_version();
         rpi_gpio_fsel(pin_out, RPI_GPIO_FSEL_OUT);
         rpi_gpio_fsel(pin_in, RPI_GPIO_FSEL_IN);
+        rpi_gpio_fsel(PIN_12, RPI_GPIO_FSEL_ALT5);
+        pwm_init(0, 1, 1);
+        pwm_set_range(0, 1024);
+        pwm_set_data(0, 512);
         if(rpi_gpio_read(pin_in))
             printf("HIGH!\n");
         else

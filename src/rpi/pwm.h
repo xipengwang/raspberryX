@@ -24,7 +24,7 @@ typedef enum{
     RPI_PWM_CTL_FIFP2 = 1<<13,
    //RESERVE 0
     RPI_PWM_CTL_MSEN2 = 1<<15
-    
+
 } rpi_pwm_CTL_t;
 
 
@@ -32,9 +32,11 @@ typedef struct {
     uint32_t CTL;
     uint32_t STA;
     uint32_t DMAC;
+    uint32_t reverved0;
     uint32_t RNG1;
     uint32_t DAT1;
     uint32_t FIF1;
+    uint32_t reverved1;
     uint32_t RNG2;
     uint32_t DAT2;
 } rpi_pwm_t;
