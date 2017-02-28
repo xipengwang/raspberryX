@@ -5,7 +5,6 @@
 #include "gpio.h"
 
 #define RPI_PWM_PASSWD 0x5a
-
 typedef enum{
     RPI_PWM_CTL_PWEN1 = 1,
     RPI_PWM_CTL_MODE1 = 1<<1,
@@ -48,6 +47,9 @@ typedef struct{
     uint32_t DATA;
 } rpi_pwm_clk_t;
 
+extern volatile rpi_pwm_t *rpi_pwm;
+extern volatile rpi_pwm_clk_t *rpi_pwm_clk;
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -59,7 +61,7 @@ void pwm_set_range(uint8_t channel, uint32_t range);
 
 void pwm_set_data(uint8_t channel, uint32_t data);
 
-void pwm_close(Rpi_Gpio_Pin PWM_PIN);
+void pwm_close(uint8_t channel);
 
 #ifdef __cplusplus
 }

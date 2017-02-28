@@ -23,7 +23,6 @@
 #define RPI_I2C1               0x804000
 #define RPI_I2C2               0x805000
 
-
 #ifdef __cplusplus
 extern "C" {
 #endif

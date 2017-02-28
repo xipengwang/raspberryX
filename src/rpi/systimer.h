@@ -24,6 +24,7 @@ typedef struct {
     uint32_t M0;
 } rpi_sys_timer_t;
 
+extern volatile rpi_sys_timer_t *rpi_sys_timer;
 
 #ifdef __cplusplus
 extern "C" {

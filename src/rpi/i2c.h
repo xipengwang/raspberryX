@@ -45,11 +45,15 @@ typedef struct {
     uint32_t CLKT;
 } rpi_i2c_t;
 
+extern volatile rpi_i2c_t *rpi_i2c0;
+extern volatile rpi_i2c_t *rpi_i2c1;
+extern volatile rpi_i2c_t *rpi_i2c2;
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-    int rpi_i2c_init(Rpi_Gpio_Pin SDA_PIN, Rpi_Gpio_Pin SCL_PIN);
+    int rpi_i2c_init();
     void rpi_i2c_close(Rpi_Gpio_Pin SDA_PIN, Rpi_Gpio_Pin SCL_PIN);
     void rpi_i2c_setslave(rpi_i2c_t *i2c, uint8_t addr);
     void rpi_i2c_setclockdivider(rpi_i2c_t *i2c, uint16_t divider);

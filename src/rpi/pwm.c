@@ -55,7 +55,7 @@ void pwm_set_data(uint8_t channel, uint32_t data)
     }
 }
 
-void pwm_close(uin8_t channel)
+void pwm_close(uint8_t channel)
 {
     //disable PWM
 }

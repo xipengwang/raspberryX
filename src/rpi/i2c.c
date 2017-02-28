@@ -4,13 +4,11 @@ volatile rpi_i2c_t *rpi_i2c0;
 volatile rpi_i2c_t *rpi_i2c1;
 volatile rpi_i2c_t *rpi_i2c2;
 
-int rpi_i2c_init(Rpi_Gpio_Pin SDA_PIN, Rpi_Gpio_Pin SCL_PIN)
+int rpi_i2c_init()
 {
     if (rpi_i2c0 == MAP_FAILED || rpi_i2c1 == MAP_FAILED || rpi_i2c2 == MAP_FAILED)
         return 0;
 
-    rpi_gpio_fsel(SDA_PIN, RPI_GPIO_FSEL_ALT0); /* SDA */
-    rpi_gpio_fsel(SCL_PIN, RPI_GPIO_FSEL_ALT0); /* SCL */
     return 1;
 }
 
