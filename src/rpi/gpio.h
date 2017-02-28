@@ -2,7 +2,6 @@
 #define _RPI_GPIO_H
 
 #include "rpi.h"
-
 typedef enum {
     /* RPi B+, RPi2, and RPi3 all use the same header 40 pins header*/
     /* pin header # = MPU GPIO pin # */
@@ -95,6 +94,8 @@ typedef struct {
     uint32_t GPPUDCLK0;
     uint32_t GPPUDCLK1;
 } rpi_gpio_t;
+
+extern volatile rpi_gpio_t *rpi_gpio;
 
 #ifdef __cplusplus
 extern "C" {

@@ -17,6 +17,33 @@ int main(int argc, char **args)
         print_version();
         rpi_gpio_fsel(pin_out, RPI_GPIO_FSEL_OUT);
         rpi_gpio_fsel(pin_in, RPI_GPIO_FSEL_IN);
+        rpi_gpio_fsel(PIN_12, RPI_GPIO_FSEL_ALT5);
+
+        //PWM test
+        pwm_init(0, 1, 1);
+        pwm_set_range(0, 1024);
+        pwm_set_data(0, 512);
+
+        //i2c test
+        rpi_gpio_fsel(PIN_03, RPI_GPIO_FSEL_ALT0); /* SDA */
+        rpi_gpio_fsel(PIN_05, RPI_GPIO_FSEL_ALT0); /* SCL */
+        rpi_i2c_setslave(rpi_i2c0, 0xC4);
+        char buf[] = { 0x01, 0x02, 0x11, 0x33 }; // Data to send
+
+        if(rpi_i2c_write(rpi_i2c0, buf, sizeof(buf))!= RPI_I2C_OK){
+            printf("Not writing correctly \n");
+        }else{
+            printf("Write to I2C: %02X  %02X  %02X  %02X \n", buf[0], buf[1], buf[2], buf[3]);
+        }
+
+        if(rpi_i2c_read(rpi_i2c0, buf, sizeof(buf))!= RPI_I2C_OK){
+            printf("Not reading correctly \n");
+        }else{
+            printf("Read from I2C: %02X  %02X  %02X  %02X \n", buf[0], buf[1], buf[2], buf[3]);
+        }
+        rpi_i2c_close(PIN_03, PIN_05);
+
+
         if(rpi_gpio_read(pin_in))
             printf("HIGH!\n");
         else

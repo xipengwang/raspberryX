@@ -16,12 +16,6 @@ uint32_t *rpi_peripherals_base;
 uint32_t rpi_peripherals_size;
 uint32_t *rpi_peripherals;
 
-extern volatile rpi_gpio_t *rpi_gpio;
-extern volatile rpi_sys_timer_t *rpi_sys_timer;
-extern volatile rpi_pwm_t *rpi_pwm;
-extern volatile rpi_i2c_t *rpi_i2c0;
-extern volatile rpi_i2c_t *rpi_i2c1;
-extern volatile rpi_i2c_t *rpi_i2c2;
 static void *mapmem(const char *msg, size_t size, int fd, off_t off)
 {
     void *map = mmap(NULL, size, (PROT_READ | PROT_WRITE), MAP_SHARED, fd, off);
@@ -75,6 +69,7 @@ int rpi_init(void)
         rpi_gpio = (rpi_gpio_t*)(rpi_peripherals + RPI_GPIO_BASE/4);
         rpi_sys_timer = (rpi_sys_timer_t*)(rpi_peripherals + RPI_SYS_TIMER/4);
         rpi_pwm = (rpi_pwm_t*)(rpi_peripherals + RPI_PWM/4);
+        rpi_pwm_clk = (rpi_pwm_clk_t*) (rpi_peripherals + RPI_PWM_CLK/4);
         rpi_i2c0 = (rpi_i2c_t*)(rpi_peripherals + RPI_I2C0/4);
         rpi_i2c1 = (rpi_i2c_t*)(rpi_peripherals + RPI_I2C1/4);
         rpi_i2c2 = (rpi_i2c_t*)(rpi_peripherals + RPI_I2C2/4);
