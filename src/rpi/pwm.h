@@ -3,7 +3,7 @@
 
 #include "rpi.h"
 #include "gpio.h"
-
+#include "common/time_util.h"
 #define RPI_PWM_PASSWD 0x5a
 typedef enum{
     RPI_PWM_CTL_PWEN1 = 1,
@@ -26,6 +26,22 @@ typedef enum{
 
 } rpi_pwm_CTL_t;
 
+typedef enum
+{
+    BCM_PWM_CLOCK_DIVIDER_2048 = 2048, //9.375khz
+    BCM_PWM_CLOCK_DIVIDER_1024 = 1024, //18.75khz
+    BCM_PWM_CLOCK_DIVIDER_512 = 512, //37.5khz
+    BCM_PWM_CLOCK_DIVIDER_256 = 256, //75khz
+    BCM_PWM_CLOCK_DIVIDER_128 = 128, //150khz
+    BCM_PWM_CLOCK_DIVIDER_64 = 64, //300khz
+    BCM_PWM_CLOCK_DIVIDER_32 = 32, //600.0khz
+    BCM_PWM_CLOCK_DIVIDER_16 = 16, //1.2Mhz
+    BCM_PWM_CLOCK_DIVIDER_8 = 8, //2.4Mhz
+    BCM_PWM_CLOCK_DIVIDER_4 = 4, //4.8Mhz
+    BCM_PWM_CLOCK_DIVIDER_2 = 2, //9.6Mhz, fastest you can get
+    BCM_PWM_CLOCK_DIVIDER_1 = 1 //4.6875khz, same as divider 4096
+} rpi_pwm_clkdiv_t;
+
 
 typedef struct {
     uint32_t CTL;
@@ -41,10 +57,16 @@ typedef struct {
 } rpi_pwm_t;
 
 typedef struct{
+    //31-24 passwd
+    //23-11 unused
+    //10-9 mash control
+    //8 flip, 7 busy, 6 unused, 5 kill, 4 enable
+    //3-0 src
+    uint32_t CTL;
     //31-24: passwd   5a
     //23-12: DIVI Integer part of divisor
     //11-0: DIVF: Fractional part of divisor
-    uint32_t DATA;
+    uint32_t DIV;
 } rpi_pwm_clk_t;
 
 extern volatile rpi_pwm_t *rpi_pwm;
