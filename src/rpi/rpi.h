@@ -22,6 +22,8 @@
 #define RPI_I2C0               0x205000
 #define RPI_I2C1               0x804000
 #define RPI_I2C2               0x805000
+#define RPI_SPI0               0x204000
+
 
 #ifdef __cplusplus
 extern "C" {

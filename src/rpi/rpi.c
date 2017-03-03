@@ -11,6 +11,7 @@
 #include "systimer.h"
 #include "pwm.h"
 #include "i2c.h"
+#include "spi.h"
 
 uint32_t *rpi_peripherals_base;
 uint32_t rpi_peripherals_size;
@@ -73,6 +74,7 @@ int rpi_init(void)
         rpi_i2c0 = (rpi_i2c_t*)(rpi_peripherals + RPI_I2C0/4);
         rpi_i2c1 = (rpi_i2c_t*)(rpi_peripherals + RPI_I2C1/4);
         rpi_i2c2 = (rpi_i2c_t*)(rpi_peripherals + RPI_I2C2/4);
+        rpi_spi0 = (rpi_spi_t*)(rpi_peripherals + RPI_SPI0/4);
         ok = 0;
     }
     else {
