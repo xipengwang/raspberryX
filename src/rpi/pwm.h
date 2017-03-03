@@ -21,7 +21,7 @@ typedef enum{
     RPI_PWM_CTL_SBIT2 = 1<<11,
     RPI_PWM_CTL_POLA2 = 1<<12,
     RPI_PWM_CTL_FIFP2 = 1<<13,
-   //RESERVE 0
+    //RESERVE 0
     RPI_PWM_CTL_MSEN2 = 1<<15
 
 } rpi_pwm_CTL_t;
@@ -75,15 +75,15 @@ extern volatile rpi_pwm_clk_t *rpi_pwm_clk;
 #ifdef __cplusplus
 extern "C" {
 #endif
-void pwm_init(uint8_t channel, uint8_t markspace, uint8_t enable);
+    void pwm_init(uint8_t channel, uint8_t markspace, uint8_t enable);
 
-void pwm_set_clock(uint32_t divisor);
+    void pwm_set_clock(uint32_t divisor);
 
-void pwm_set_range(uint8_t channel, uint32_t range);
+    void pwm_set_range(uint8_t channel, uint32_t range);
 
-void pwm_set_data(uint8_t channel, uint32_t data);
+    void pwm_set_data(uint8_t channel, uint32_t data);
 
-void pwm_close(uint8_t channel);
+    void pwm_close(uint8_t channel);
 
 #ifdef __cplusplus
 }
