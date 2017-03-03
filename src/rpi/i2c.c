@@ -45,15 +45,15 @@ RPI_I2C_RETURN_STATUS rpi_i2c_read(volatile rpi_i2c_t *i2c, char* buf, uint32_t 
     uint8_t reason = RPI_I2C_OK;
 
     // Clear FIFO
-    mem_set_bits_32((uint32_t*)&(i2c->C), RPI_I2C_C_CLEAR, RPI_I2C_C_CLEAR);
+    mem_set_bits_32((uint32_t*)&(i2c->C), RPI_I2C_C_CLEAR_Msk, RPI_I2C_C_CLEAR_Msk);
     // Clear Status
     mem_set_bits_32((uint32_t*)&(i2c->S),
-                    RPI_I2C_S_DONE | RPI_I2C_S_ERR | RPI_I2C_S_CLKT,
-                    RPI_I2C_S_DONE | RPI_I2C_S_ERR | RPI_I2C_S_CLKT);
+                    RPI_I2C_S_DONE_Msk | RPI_I2C_S_ERR_Msk | RPI_I2C_S_CLKT_Msk,
+                    RPI_I2C_S_DONE_Msk | RPI_I2C_S_ERR_Msk | RPI_I2C_S_CLKT_Msk);
     // Set Data Length
     i2c->DLEN.reg = len;
     // Start read
-    i2c->C.reg = RPI_I2C_C_I2CEN | RPI_I2C_C_ST | RPI_I2C_C_READ;
+    i2c->C.reg = RPI_I2C_C_I2CEN_Msk | RPI_I2C_C_ST_Msk | RPI_I2C_C_READ_Msk;
 
     while (!(i2c->S.bit.DONE)) {
         while (i2c->S.bit.RXD) {
@@ -83,8 +83,8 @@ RPI_I2C_RETURN_STATUS rpi_i2c_read(volatile rpi_i2c_t *i2c, char* buf, uint32_t 
         reason = RPI_I2C_ERROR_DATA;
     }
     mem_set_bits_32((uint32_t*)&(i2c->S),
-                    RPI_I2C_S_DONE | RPI_I2C_S_ERR | RPI_I2C_S_CLKT,
-                    RPI_I2C_S_DONE | RPI_I2C_S_ERR | RPI_I2C_S_CLKT);
+                    RPI_I2C_S_DONE_Msk | RPI_I2C_S_ERR_Msk | RPI_I2C_S_CLKT_Msk,
+                    RPI_I2C_S_DONE_Msk | RPI_I2C_S_ERR_Msk | RPI_I2C_S_CLKT_Msk);
     return reason;
 }
 
@@ -95,11 +95,11 @@ RPI_I2C_RETURN_STATUS rpi_i2c_write(volatile rpi_i2c_t *i2c, const char * buf, u
     uint8_t reason = RPI_I2C_OK;
 
     // Clear FIFO
-    mem_set_bits_32((uint32_t*)&(i2c->C), RPI_I2C_C_CLEAR, RPI_I2C_C_CLEAR);
+    mem_set_bits_32((uint32_t*)&(i2c->C), RPI_I2C_C_CLEAR_Msk, RPI_I2C_C_CLEAR_Msk);
     // Clear Status
     mem_set_bits_32((uint32_t*)&(i2c->S),
-                    RPI_I2C_S_DONE | RPI_I2C_S_ERR | RPI_I2C_S_CLKT,
-                    RPI_I2C_S_DONE | RPI_I2C_S_ERR | RPI_I2C_S_CLKT);
+                    RPI_I2C_S_DONE_Msk | RPI_I2C_S_ERR_Msk | RPI_I2C_S_CLKT_Msk,
+                    RPI_I2C_S_DONE_Msk | RPI_I2C_S_ERR_Msk | RPI_I2C_S_CLKT_Msk);
     // Set Data Length
     i2c->DLEN.reg = len;
     // pre-populate FIFO with max buffer; 16-byte FIFO
@@ -109,7 +109,7 @@ RPI_I2C_RETURN_STATUS rpi_i2c_write(volatile rpi_i2c_t *i2c, const char * buf, u
         remaining--;
     }
     // Start write
-    i2c->C.reg =  RPI_I2C_C_I2CEN | RPI_I2C_C_ST;
+    i2c->C.reg =  RPI_I2C_C_I2CEN_Msk | RPI_I2C_C_ST_Msk;
 
     // Transfer is over
     while(!(i2c->S.bit.DONE)) {
@@ -131,12 +131,11 @@ RPI_I2C_RETURN_STATUS rpi_i2c_write(volatile rpi_i2c_t *i2c, const char * buf, u
         // Not all data is received
         reason = RPI_I2C_ERROR_DATA;
         // Clear FIFO
-        mem_set_bits_32((uint32_t*)&(i2c->C), RPI_I2C_C_CLEAR, RPI_I2C_C_CLEAR);
+        mem_set_bits_32((uint32_t*)&(i2c->C), RPI_I2C_C_CLEAR_Msk, RPI_I2C_C_CLEAR_Msk);
     }
-
     // Clear Status
     mem_set_bits_32((uint32_t*)&(i2c->S),
-                    RPI_I2C_S_DONE | RPI_I2C_S_ERR | RPI_I2C_S_CLKT,
-                    RPI_I2C_S_DONE | RPI_I2C_S_ERR | RPI_I2C_S_CLKT);
+                    RPI_I2C_S_DONE_Msk | RPI_I2C_S_ERR_Msk | RPI_I2C_S_CLKT_Msk,
+                    RPI_I2C_S_DONE_Msk | RPI_I2C_S_ERR_Msk | RPI_I2C_S_CLKT_Msk);
     return reason;
 }

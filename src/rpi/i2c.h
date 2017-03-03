@@ -27,15 +27,21 @@ typedef union {
     } bit;
     uint32_t reg;
 } RPI_I2C_C_REG;
-typedef enum {
-    RPI_I2C_C_I2CEN = 1 << 15,
-    RPI_I2C_C_INTR = 1 << 10,
-    RPI_I2C_C_INTT = 1 << 9,
-    RPI_I2C_C_INTD = 1 << 8,
-    RPI_I2C_C_ST = 1 << 7,
-    RPI_I2C_C_CLEAR = 1 << 5 | 1 << 4,
-    RPI_I2C_C_READ = 1
-} RPI_I2C_C;
+#define RPI_I2C_C_I2CEN_Pos 15
+#define RPI_I2C_C_I2CEN_Msk 1 << RPI_I2C_C_I2CEN_Pos
+#define RPI_I2C_C_INTR_Pos 10
+#define RPI_I2C_C_INTR_Msk 1 << RPI_I2C_C_INTR_Pos
+#define RPI_I2C_C_INTT_Pos 9
+#define RPI_I2C_C_INTT_Msk 1 << RPI_I2C_C_INTT_Pos
+#define RPI_I2C_C_INTD_Pos 8
+#define RPI_I2C_C_INTD_Msk 1 << RPI_I2C_C_INTD_Pos
+#define RPI_I2C_C_ST_Pos 7
+#define RPI_I2C_C_ST_Msk 1 << RPI_I2C_C_ST_Pos
+#define RPI_I2C_C_CLEAR_H_Pos 5
+#define RPI_I2C_C_CLEAR_L_Pos 4
+#define RPI_I2C_C_CLEAR_Msk (1 << RPI_I2C_C_CLEAR_H_Pos) | (1 << RPI_I2C_C_CLEAR_L_Pos)
+#define RPI_I2C_C_READ_Pos 0
+#define RPI_I2C_C_READ_Msk 1 << RPI_I2C_C_READ_Pos
 
 typedef union {
     struct {
@@ -53,18 +59,28 @@ typedef union {
     } bit;
     uint32_t reg;
 } RPI_I2C_S_REG;
-typedef enum {
-    RPI_I2C_S_CLKT = 1 << 9,
-    RPI_I2C_S_ERR = 1 << 8,
-    RPI_I2C_S_RXF = 1 << 7,
-    RPI_I2C_S_TXE = 1 << 6,
-    RPI_I2C_S_RXD = 1 << 5,
-    RPI_I2C_S_TXD = 1 << 4,
-    RPI_I2C_S_RXR = 1 << 3,
-    RPI_I2C_S_TXW = 1 << 2,
-    RPI_I2C_S_DONE = 1 << 1,
-    RPI_I2C_S_TA = 1
-} RPI_I2C_S;
+
+
+#define RPI_I2C_S_CLKT_Pos 9
+#define RPI_I2C_S_CLKT_Msk 1 << RPI_I2C_S_CLKT_Pos
+#define RPI_I2C_S_ERR_Pos 8
+#define RPI_I2C_S_ERR_Msk 1 << RPI_I2C_S_ERR_Pos
+#define RPI_I2C_S_RXF_Pos 7
+#define RPI_I2C_S_RXF_Msk 1 << RPI_I2C_S_RXF_Pos
+#define RPI_I2C_S_TXE_Pos 6
+#define RPI_I2C_S_TXE_Msk 1 << RPI_I2C_S_TXE_Pos
+#define RPI_I2C_S_RXD_Pos 5
+#define RPI_I2C_S_RXD_Msk 1 << RPI_I2C_S_RXD_Pos
+#define RPI_I2C_S_TXD_Pos 4
+#define RPI_I2C_S_TXD_Msk 1 << RPI_I2C_S_TXD_Pos
+#define RPI_I2C_S_RXR_Pos 3
+#define RPI_I2C_S_RXR_Msk 1 << RPI_I2C_S_RXR_Pos
+#define RPI_I2C_S_TXW_Pos 2
+#define RPI_I2C_S_TXW_Msk 1 << RPI_I2C_S_TXW_Pos
+#define RPI_I2C_S_DONE_Pos 1
+#define RPI_I2C_S_DONE_Msk 1 << RPI_I2C_S_DONE_Pos
+#define RPI_I2C_S_TA_Pos 0
+#define RPI_I2C_S_TA_Msk 1 << RPI_I2C_S_TA_Pos
 
 typedef union {
     struct {
