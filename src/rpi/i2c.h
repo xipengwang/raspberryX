@@ -47,7 +47,6 @@ typedef struct {
 
 extern volatile rpi_i2c_t *rpi_i2c0;
 extern volatile rpi_i2c_t *rpi_i2c1;
-extern volatile rpi_i2c_t *rpi_i2c2;
 
 #ifdef __cplusplus
 extern "C" {

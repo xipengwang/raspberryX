@@ -2,7 +2,6 @@
 
 volatile rpi_i2c_t *rpi_i2c0;
 volatile rpi_i2c_t *rpi_i2c1;
-volatile rpi_i2c_t *rpi_i2c2;
 
 int rpi_i2c_init(volatile rpi_i2c_t *i2c)
 {
