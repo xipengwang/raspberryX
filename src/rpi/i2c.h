@@ -53,13 +53,19 @@ extern volatile rpi_i2c_t *rpi_i2c2;
 extern "C" {
 #endif
 
-    int rpi_i2c_init();
+    /**
+     * Initialize i2c.
+     * @param i2c A rpi_i2c_t pointer. It will be one of [rpi_i2c0, rpi_i2c1, rpi_i2c2].
+     * @return Return 0 on success
+     */
+    int rpi_i2c_init(volatile rpi_i2c_t *rpi_i2c);
+
     void rpi_i2c_close(Rpi_Gpio_Pin SDA_PIN, Rpi_Gpio_Pin SCL_PIN);
-    void rpi_i2c_setslave(rpi_i2c_t *i2c, uint8_t addr);
-    void rpi_i2c_setclockdivider(rpi_i2c_t *i2c, uint16_t divider);
-    void rpi_i2c_set_baudrate(rpi_i2c_t *i2c, uint32_t baudrate);
-    RPI_I2C_RETURN_STATUS rpi_i2c_read(rpi_i2c_t *i2c, char* buf, uint32_t len);
-    RPI_I2C_RETURN_STATUS rpi_i2c_write(rpi_i2c_t *i2c,const char * buf, uint32_t len);
+    void rpi_i2c_setslave(volatile rpi_i2c_t *i2c, uint8_t addr);
+    void rpi_i2c_setclockdivider(volatile rpi_i2c_t *i2c, uint16_t divider);
+    void rpi_i2c_set_baudrate(volatile rpi_i2c_t *i2c, uint32_t baudrate);
+    RPI_I2C_RETURN_STATUS rpi_i2c_read(volatile rpi_i2c_t *i2c, char* buf, uint32_t len);
+    RPI_I2C_RETURN_STATUS rpi_i2c_write(volatile rpi_i2c_t *i2c, const char * buf, uint32_t len);
 
 #ifdef __cplusplus
 }

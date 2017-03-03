@@ -4,12 +4,12 @@ volatile rpi_i2c_t *rpi_i2c0;
 volatile rpi_i2c_t *rpi_i2c1;
 volatile rpi_i2c_t *rpi_i2c2;
 
-int rpi_i2c_init()
+int rpi_i2c_init(volatile rpi_i2c_t *i2c)
 {
-    if (rpi_i2c0 == MAP_FAILED || rpi_i2c1 == MAP_FAILED || rpi_i2c2 == MAP_FAILED)
-        return 0;
+    if (i2c == MAP_FAILED)
+        return -1;
 
-    return 1;
+    return 0;
 }
 
 void rpi_i2c_close(Rpi_Gpio_Pin SDA_PIN, Rpi_Gpio_Pin SCL_PIN)
@@ -18,7 +18,7 @@ void rpi_i2c_close(Rpi_Gpio_Pin SDA_PIN, Rpi_Gpio_Pin SCL_PIN)
     rpi_gpio_fsel(SCL_PIN, RPI_GPIO_FSEL_IN); /* SCL */
 }
 
-void rpi_i2c_setslave(rpi_i2c_t *i2c, uint8_t addr)
+void rpi_i2c_setslave(volatile rpi_i2c_t *i2c, uint8_t addr)
 {
     i2c->A = addr;
 }
@@ -26,12 +26,12 @@ void rpi_i2c_setslave(rpi_i2c_t *i2c, uint8_t addr)
 // SCL = core clock / DIV
 // The reset value is 0x5dc which is 1500.
 // core clock = 2500kHz, which results in SCL reset value as 166khz.
-void rpi_i2c_setclockdivider(rpi_i2c_t *i2c, uint16_t divider)
+void rpi_i2c_setclockdivider(volatile rpi_i2c_t *i2c, uint16_t divider)
 {
     i2c->DIV = divider;
 }
 
-void rpi_i2c_set_baudrate(rpi_i2c_t *i2c, uint32_t baudrate)
+void rpi_i2c_set_baudrate(volatile rpi_i2c_t *i2c, uint32_t baudrate)
 {
 	uint16_t divider;
     //round down any odd number
@@ -39,7 +39,7 @@ void rpi_i2c_set_baudrate(rpi_i2c_t *i2c, uint32_t baudrate)
 	rpi_i2c_setclockdivider(i2c, divider);
 }
 
-RPI_I2C_RETURN_STATUS rpi_i2c_read(rpi_i2c_t *i2c, char* buf, uint32_t len)
+RPI_I2C_RETURN_STATUS rpi_i2c_read(volatile rpi_i2c_t *i2c, char* buf, uint32_t len)
 {
     uint32_t remaining = len;
     uint32_t i = 0;
@@ -87,7 +87,7 @@ RPI_I2C_RETURN_STATUS rpi_i2c_read(rpi_i2c_t *i2c, char* buf, uint32_t len)
     return reason;
 }
 
-RPI_I2C_RETURN_STATUS rpi_i2c_write(rpi_i2c_t *i2c, const char * buf, uint32_t len)
+RPI_I2C_RETURN_STATUS rpi_i2c_write(volatile rpi_i2c_t *i2c, const char * buf, uint32_t len)
 {
     uint32_t remaining = len;
     uint32_t i = 0;

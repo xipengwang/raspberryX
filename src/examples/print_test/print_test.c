@@ -30,17 +30,28 @@ int main(int argc, char **args)
         rpi_i2c_setslave(rpi_i2c0, 0xC4);
         char buf[] = { 0x01, 0x02, 0x11, 0x33 }; // Data to send
 
-        if(rpi_i2c_write(rpi_i2c0, buf, sizeof(buf))!= RPI_I2C_OK){
-            printf("Not writing correctly \n");
-        }else{
+        int w_return = rpi_i2c_write(rpi_i2c0, buf, sizeof(buf));
+        if(w_return == RPI_I2C_OK){
             printf("Write to I2C: %02X  %02X  %02X  %02X \n", buf[0], buf[1], buf[2], buf[3]);
+        } else if (w_return == RPI_I2C_ERROR_NACK){
+            printf("NACK\n");
+        } else if (w_return == RPI_I2C_ERROR_CLKT) {
+            printf("TIME OUT\n");
+        } else if (w_return == RPI_I2C_ERROR_DATA) {
+            printf("DATA REMAINING\n");
         }
 
-        if(rpi_i2c_read(rpi_i2c0, buf, sizeof(buf))!= RPI_I2C_OK){
-            printf("Not reading correctly \n");
-        }else{
+        int r_return = rpi_i2c_write(rpi_i2c0, buf, sizeof(buf));
+        if(r_return == RPI_I2C_OK){
             printf("Read from I2C: %02X  %02X  %02X  %02X \n", buf[0], buf[1], buf[2], buf[3]);
+        } else if (r_return == RPI_I2C_ERROR_NACK){
+            printf("NACK\n");
+        } else if (r_return == RPI_I2C_ERROR_CLKT) {
+            printf("TIME OUT\n");
+        } else if (r_return == RPI_I2C_ERROR_DATA) {
+            printf("DATA REMAINING\n");
         }
+
         rpi_i2c_close(PIN_03, PIN_05);
 
 
