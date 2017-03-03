@@ -53,7 +53,13 @@ extern volatile rpi_i2c_t *rpi_i2c2;
 extern "C" {
 #endif
 
-    int rpi_i2c_init();
+    /**
+     * Initialize i2c.
+     * @param i2c A rpi_i2c_t pointer. It will be one of [rpi_i2c0, rpi_i2c1, rpi_i2c2].
+     * @return Return 0 on success
+     */
+    int rpi_i2c_init(volatile rpi_i2c_t *rpi_i2c);
+
     void rpi_i2c_close(Rpi_Gpio_Pin SDA_PIN, Rpi_Gpio_Pin SCL_PIN);
     void rpi_i2c_setslave(volatile rpi_i2c_t *i2c, uint8_t addr);
     void rpi_i2c_setclockdivider(volatile rpi_i2c_t *i2c, uint16_t divider);

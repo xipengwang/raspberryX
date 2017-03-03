@@ -4,12 +4,12 @@ volatile rpi_i2c_t *rpi_i2c0;
 volatile rpi_i2c_t *rpi_i2c1;
 volatile rpi_i2c_t *rpi_i2c2;
 
-int rpi_i2c_init()
+int rpi_i2c_init(volatile rpi_i2c_t *i2c)
 {
-    if (rpi_i2c0 == MAP_FAILED || rpi_i2c1 == MAP_FAILED || rpi_i2c2 == MAP_FAILED)
-        return 0;
+    if (i2c == MAP_FAILED)
+        return -1;
 
-    return 1;
+    return 0;
 }
 
 void rpi_i2c_close(Rpi_Gpio_Pin SDA_PIN, Rpi_Gpio_Pin SCL_PIN)
