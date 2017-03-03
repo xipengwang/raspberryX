@@ -8,6 +8,8 @@
 #include "common/std_util.h"
 #include "common/mem_op.h"
 
+#define __IO volatile
+
 #define RPI_VERSION 10000
 
 #define HIGH 0x01

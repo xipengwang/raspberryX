@@ -19,7 +19,7 @@ void rpi_i2c_close(Rpi_Gpio_Pin SDA_PIN, Rpi_Gpio_Pin SCL_PIN)
 
 void rpi_i2c_setslave(volatile rpi_i2c_t *i2c, uint8_t addr)
 {
-    i2c->A = addr;
+    i2c->A.reg = addr;
 }
 
 // SCL = core clock / DIV
@@ -27,7 +27,7 @@ void rpi_i2c_setslave(volatile rpi_i2c_t *i2c, uint8_t addr)
 // core clock = 2500kHz, which results in SCL reset value as 166khz.
 void rpi_i2c_setclockdivider(volatile rpi_i2c_t *i2c, uint16_t divider)
 {
-    i2c->DIV = divider;
+    i2c->DIV.reg = divider;
 }
 
 void rpi_i2c_set_baudrate(volatile rpi_i2c_t *i2c, uint32_t baudrate)
@@ -45,43 +45,45 @@ RPI_I2C_RETURN_STATUS rpi_i2c_read(volatile rpi_i2c_t *i2c, char* buf, uint32_t 
     uint8_t reason = RPI_I2C_OK;
 
     // Clear FIFO
-    mem_set_bits_32((uint32_t*)&i2c->C, RPI_I2C_C_CLEAR, RPI_I2C_C_CLEAR);
+    mem_set_bits_32((uint32_t*)&(i2c->C), RPI_I2C_C_CLEAR, RPI_I2C_C_CLEAR);
     // Clear Status
-    mem_set_bits_32((uint32_t*)&i2c->S, RPI_I2C_S_DONE | RPI_I2C_S_ERR | RPI_I2C_S_CLKT,
+    mem_set_bits_32((uint32_t*)&(i2c->S),
+                    RPI_I2C_S_DONE | RPI_I2C_S_ERR | RPI_I2C_S_CLKT,
                     RPI_I2C_S_DONE | RPI_I2C_S_ERR | RPI_I2C_S_CLKT);
     // Set Data Length
-    i2c->DLEN = len;
+    i2c->DLEN.reg = len;
     // Start read
-    mem_write_32_nb((uint32_t*)&i2c->C, RPI_I2C_C_I2CEN | RPI_I2C_C_ST | RPI_I2C_C_READ);
+    i2c->C.reg = RPI_I2C_C_I2CEN | RPI_I2C_C_ST | RPI_I2C_C_READ;
 
-    while (!(i2c->S & RPI_I2C_S_DONE)) {
-        while (i2c->S & RPI_I2C_S_RXD) {
+    while (!(i2c->S.bit.DONE)) {
+        while (i2c->S.bit.RXD) {
             // Read from FIFO
-            buf[i] = i2c->FIFO;
+            buf[i] = i2c->FIFO.reg;
             i++;
             remaining--;
     	}
     }
 
     // transfer has finished - grab any remaining stuff in FIFO
-    while (remaining && i2c->S & RPI_I2C_S_RXD) {
+    while (remaining && i2c->S.bit.RXD) {
         /* Read from FIFO, no barrier */
-        buf[i] = i2c->FIFO;
+        buf[i] = i2c->FIFO.reg;
         i++;
         remaining--;
     }
 
-    if (i2c->S & RPI_I2C_S_ERR) {
+    if (i2c->S.bit.ERR) {
         // Received a NACK
         reason = RPI_I2C_ERROR_NACK;
-    } else if (i2c->S & RPI_I2C_S_CLKT) {
+    } else if (i2c->S.bit.CLKT) {
         // Received Clock Stretch Timeout
         reason = RPI_I2C_ERROR_CLKT;
     } else if (remaining) {
         // Not all data is received
         reason = RPI_I2C_ERROR_DATA;
     }
-    mem_set_bits_32((uint32_t*)&i2c->S, RPI_I2C_S_DONE | RPI_I2C_S_ERR | RPI_I2C_S_CLKT,
+    mem_set_bits_32((uint32_t*)&(i2c->S),
+                    RPI_I2C_S_DONE | RPI_I2C_S_ERR | RPI_I2C_S_CLKT,
                     RPI_I2C_S_DONE | RPI_I2C_S_ERR | RPI_I2C_S_CLKT);
     return reason;
 }
@@ -93,46 +95,48 @@ RPI_I2C_RETURN_STATUS rpi_i2c_write(volatile rpi_i2c_t *i2c, const char * buf, u
     uint8_t reason = RPI_I2C_OK;
 
     // Clear FIFO
-    mem_set_bits_32((uint32_t*)&i2c->C, RPI_I2C_C_CLEAR, RPI_I2C_C_CLEAR);
+    mem_set_bits_32((uint32_t*)&(i2c->C), RPI_I2C_C_CLEAR, RPI_I2C_C_CLEAR);
     // Clear Status
-    mem_set_bits_32((uint32_t*)&i2c->S, RPI_I2C_S_DONE | RPI_I2C_S_ERR | RPI_I2C_S_CLKT,
+    mem_set_bits_32((uint32_t*)&(i2c->S),
+                    RPI_I2C_S_DONE | RPI_I2C_S_ERR | RPI_I2C_S_CLKT,
                     RPI_I2C_S_DONE | RPI_I2C_S_ERR | RPI_I2C_S_CLKT);
     // Set Data Length
-    i2c->DLEN = len;
+    i2c->DLEN.reg = len;
     // pre-populate FIFO with max buffer; 16-byte FIFO
     while( remaining && ( i < 16 ) ) {
-        mem_write_32_nb((uint32_t*)&i2c->FIFO, (uint32_t)buf[i]);
+        i2c->FIFO.bit.DATA = buf[i];
         i++;
         remaining--;
     }
     // Start write
-    mem_write_32_nb((uint32_t*)&i2c->C, RPI_I2C_C_I2CEN | RPI_I2C_C_ST);
+    i2c->C.reg =  RPI_I2C_C_I2CEN | RPI_I2C_C_ST;
 
     // Transfer is over
-    while(!(i2c->S & RPI_I2C_S_DONE )) {
-        while ( remaining && (i2c->S & RPI_I2C_S_TXD )) {
+    while(!(i2c->S.bit.DONE)) {
+        while ( remaining && i2c->S.bit.TXD) {
             // Write to FIFO
-            mem_write_32_nb((uint32_t*)&i2c->FIFO, (uint32_t)buf[i]);
+            i2c->FIFO.bit.DATA = buf[i];
             i++;
             remaining--;
     	}
     }
 
-    if (i2c->S & RPI_I2C_S_ERR) {
+    if (i2c->S.bit.ERR) {
         // Received a NACK
         reason = RPI_I2C_ERROR_NACK;
-    } else if (i2c->S & RPI_I2C_S_CLKT) {
+    } else if (i2c->S.bit.CLKT) {
         // Received Clock Stretch Timeout
         reason = RPI_I2C_ERROR_CLKT;
     } else if (remaining) {
         // Not all data is received
         reason = RPI_I2C_ERROR_DATA;
         // Clear FIFO
-        mem_set_bits_32((uint32_t*)&i2c->C, RPI_I2C_C_CLEAR, RPI_I2C_C_CLEAR);
+        mem_set_bits_32((uint32_t*)&(i2c->C), RPI_I2C_C_CLEAR, RPI_I2C_C_CLEAR);
     }
 
     // Clear Status
-    mem_set_bits_32((uint32_t*)&i2c->S, RPI_I2C_S_DONE | RPI_I2C_S_ERR | RPI_I2C_S_CLKT,
+    mem_set_bits_32((uint32_t*)&(i2c->S),
+                    RPI_I2C_S_DONE | RPI_I2C_S_ERR | RPI_I2C_S_CLKT,
                     RPI_I2C_S_DONE | RPI_I2C_S_ERR | RPI_I2C_S_CLKT);
     return reason;
 }
