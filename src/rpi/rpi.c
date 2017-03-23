@@ -72,7 +72,6 @@ int rpi_init(void)
         rpi_pwm_clk = (rpi_pwm_clk_t*) (rpi_peripherals + RPI_PWM_CLK/4);
         rpi_i2c0 = (rpi_i2c_t*)(rpi_peripherals + RPI_I2C0/4);
         rpi_i2c1 = (rpi_i2c_t*)(rpi_peripherals + RPI_I2C1/4);
-        rpi_i2c2 = (rpi_i2c_t*)(rpi_peripherals + RPI_I2C2/4);
         ok = 0;
     }
     else {
