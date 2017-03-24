@@ -23,6 +23,7 @@
 #define RPI_PWM_CLK	           0x1010a4
 #define RPI_I2C0               0x205000
 #define RPI_I2C1               0x804000
+#define RPI_SPI0               0x204000
 
 #ifdef __cplusplus
 extern "C" {
