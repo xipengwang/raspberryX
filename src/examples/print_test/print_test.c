@@ -27,6 +27,11 @@ int main(int argc, char **args)
         //i2c test
         rpi_gpio_fsel(PIN_03, RPI_GPIO_FSEL_ALT0); /* SDA */
         rpi_gpio_fsel(PIN_05, RPI_GPIO_FSEL_ALT0); /* SCL */
+        if(rpi_i2c_init(rpi_i2c0)) {
+            printf("I2C error \n");
+            exit(-1);
+        }
+
         rpi_i2c_setslave(rpi_i2c0, 0xC4);
         char buf[] = { 0x01, 0x02, 0x11, 0x33 }; // Data to send
 
