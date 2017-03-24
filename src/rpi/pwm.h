@@ -4,69 +4,132 @@
 #include "rpi.h"
 #include "gpio.h"
 #include "common/time_util.h"
-#define RPI_PWM_PASSWD 0x5a
-typedef enum{
-    RPI_PWM_CTL_PWEN1 = 1,
-    RPI_PWM_CTL_MODE1 = 1<<1,
-    RPI_PWM_CTL_RPLT1 = 1<<2,
-    RPI_PWM_CTL_SBIT1 = 1<<3,
-    RPI_PWM_CTL_POLA1 = 1<<4,
-    RPI_PWM_CTL_FIFO1 = 1<<5,
-    RPI_PWM_CTL_CLRF1 = 1<<6,
-    RPI_PWM_CTL_MSEN1 = 1<<7,
 
-    RPI_PWM_CTL_PWEN2 = 1<<8,
-    RPI_PWM_CTL_MODE2 = 1<<9,
-    RPI_PWM_CTL_RPLT2 = 1<<10,
-    RPI_PWM_CTL_SBIT2 = 1<<11,
-    RPI_PWM_CTL_POLA2 = 1<<12,
-    RPI_PWM_CTL_FIFP2 = 1<<13,
-    //RESERVE 0
-    RPI_PWM_CTL_MSEN2 = 1<<15
+#define RPI_PWM_PASSWD 0x5a000000
 
-} rpi_pwm_CTL_t;
+typedef union {
+    struct {
+        uint32_t PWEN1 :1;
+        uint32_t MODE1 :1;
+        uint32_t RPTL1 :1;
+        uint32_t SBIT1 :1;
+        uint32_t POLA1 :1;
+        uint32_t USEF1 :1;
+        uint32_t CLRF1 :1;
+        uint32_t MSEN1 :1;
+        uint32_t PWEN2 :1;
+        uint32_t MODE2 :1;
+        uint32_t RPTL2 :1;
+        uint32_t SBIT2 :1;
+        uint32_t POLA2 :1;
+        uint32_t USEF2 :1;
+        uint32_t r0    :1;
+        uint32_t MSEN2 :1;
+        uint32_t r1    :16;
+    } bit;
+    uint32_t reg;
+} RPI_PWM_CTL_REG;
 
-typedef enum
-{
-    BCM_PWM_CLOCK_DIVIDER_2048 = 2048, //9.375khz
-    BCM_PWM_CLOCK_DIVIDER_1024 = 1024, //18.75khz
-    BCM_PWM_CLOCK_DIVIDER_512 = 512, //37.5khz
-    BCM_PWM_CLOCK_DIVIDER_256 = 256, //75khz
-    BCM_PWM_CLOCK_DIVIDER_128 = 128, //150khz
-    BCM_PWM_CLOCK_DIVIDER_64 = 64, //300khz
-    BCM_PWM_CLOCK_DIVIDER_32 = 32, //600.0khz
-    BCM_PWM_CLOCK_DIVIDER_16 = 16, //1.2Mhz
-    BCM_PWM_CLOCK_DIVIDER_8 = 8, //2.4Mhz
-    BCM_PWM_CLOCK_DIVIDER_4 = 4, //4.8Mhz
-    BCM_PWM_CLOCK_DIVIDER_2 = 2, //9.6Mhz, fastest you can get
-    BCM_PWM_CLOCK_DIVIDER_1 = 1 //4.6875khz, same as divider 4096
-} rpi_pwm_clkdiv_t;
+#define RPI_PWM_CTL_PWEN1_Pos 0
+#define RPI_PWM_CTL_PWEN1_Msk 1 << RPI_PWM_CTL_PWEN1_Pos
+#define RPI_PWM_CTL_MODE1_Pos 1
+#define RPI_PWM_CTL_MODE1_Msk 1 << RPI_PWM_CTL_MODE1_Pos
+#define RPI_PWM_CTL_RPLT1_Pos 2
+#define RPI_PWM_CTL_RPLT1_Msk 1 << RPI_PWM_CTL_RPLT1_Pos
+#define RPI_PWM_CTL_SBIT1_Pos 3
+#define RPI_PWM_CTL_SBIT1_Msk 1 << RPI_PWM_CTL_SBIT1_Pos
+#define RPI_PWM_CTL_POLA1_Pos 4
+#define RPI_PWM_CTL_POLA1_Msk 1 << RPI_PWM_CTL_POLA1_Pos
+#define RPI_PWM_CTL_FIFO1_Pos 5
+#define RPI_PWM_CTL_FIFO1_Msk 1 << RPI_PWM_CTL_FIFO1_Pos
+#define RPI_PWM_CTL_CLRF1_Pos 6
+#define RPI_PWM_CTL_CLRF1_Msk 1 << RPI_PWM_CTL_CLRF1_Pos
+#define RPI_PWM_CTL_MSEN1_Pos 7
+#define RPI_PWM_CTL_MSEN1_Msk 1 << RPI_PWM_CTL_MSEN1_Pos
+#define RPI_PWM_CTL_PWEN2_Pos 8
+#define RPI_PWM_CTL_PWEN2_Msk 1 << RPI_PWM_CTL_PWEN2_Pos
+#define RPI_PWM_CTL_MODE2_Pos 9
+#define RPI_PWM_CTL_MODE2_Msk 1 << RPI_PWM_CTL_MODE2_Pos
+#define RPI_PWM_CTL_RPLT2_Pos 10
+#define RPI_PWM_CTL_RPLT2_Msk 1 << RPI_PWM_CTL_RPLT2_Pos
+#define RPI_PWM_CTL_SBIT2_Pos 11
+#define RPI_PWM_CTL_SBIT2_Msk 1 << RPI_PWM_CTL_SBIT2_Pos
+#define RPI_PWM_CTL_POLA2_Pos 12
+#define RPI_PWM_CTL_POLA2_Msk 1 << RPI_PWM_CTL_POLA2_Pos
+#define RPI_PWM_CTL_USEF2_Pos 13
+#define RPI_PWM_CTL_USEF2_Msk 1 << RPI_PWM_CTL_USEF2_Pos
+#define RPI_PWM_CTL_MSEN2_Pos 15
+#define RPI_PWM_CTL_MSEN2_Msk 1 << RPI_PWM_CTL_MSEN2_Pos
 
+typedef enum {
+    RPI_PWM_CHANNEL_0,
+    RPI_PWM_CHANNEL_1
+} Rpi_Pwm_Channel;
+
+//19.2Mhz clock for PWM
+typedef enum {
+    RPI_PWM_CLOCK_DIVIDER_2048 = 2048, //9.375khz
+    RPI_PWM_CLOCK_DIVIDER_1024 = 1024, //18.75khz
+    RPI_PWM_CLOCK_DIVIDER_512  = 512,  //37.5khz
+    RPI_PWM_CLOCK_DIVIDER_256  = 256,  //75khz
+    RPI_PWM_CLOCK_DIVIDER_128  = 128,  //150khz
+    RPI_PWM_CLOCK_DIVIDER_64   = 64,   //300khz
+    RPI_PWM_CLOCK_DIVIDER_32   = 32,   //600.0khz
+    RPI_PWM_CLOCK_DIVIDER_16   = 16,   //1.2Mhz
+    RPI_PWM_CLOCK_DIVIDER_8    = 8,    //2.4Mhz
+    RPI_PWM_CLOCK_DIVIDER_4    = 4,    //4.8Mhz
+    RPI_PWM_CLOCK_DIVIDER_2    = 2,    //9.6Mhz, fastest you can get
+    RPI_PWM_CLOCK_DIVIDER_1    = 1     //4.6875khz, same as divider 4096
+} Rpi_Pwm_Clkdiv;
+
+typedef union {
+    struct {
+        uint32_t r0 :32;
+    } bit;
+    uint32_t reg;
+} RPI_PWM_SHARE_REG;
 
 typedef struct {
-    uint32_t CTL;
-    uint32_t STA;
-    uint32_t DMAC;
-    uint32_t reverved0;
-    uint32_t RNG1;
-    uint32_t DAT1;
-    uint32_t FIF1;
-    uint32_t reverved1;
-    uint32_t RNG2;
-    uint32_t DAT2;
+    __IO RPI_PWM_CTL_REG CTL;
+    __IO RPI_PWM_SHARE_REG STA;
+    __IO RPI_PWM_SHARE_REG DMAC;
+    __IO RPI_PWM_SHARE_REG reverved0;
+    __IO RPI_PWM_SHARE_REG RNG1;
+    __IO RPI_PWM_SHARE_REG DAT1;
+    __IO RPI_PWM_SHARE_REG FIF1;
+    __IO RPI_PWM_SHARE_REG reverved1;
+    __IO RPI_PWM_SHARE_REG RNG2;
+    __IO RPI_PWM_SHARE_REG DAT2;
 } rpi_pwm_t;
 
+
+typedef union {
+    struct {
+        uint32_t SRC  :4;
+        uint32_t ENAB :1;
+        uint32_t KILL :1;
+        uint32_t r0   :1;
+        uint32_t BUSY :1;
+        uint32_t FLIP :1;
+        uint32_t MASH :2;
+        uint32_t r1   :13;
+        uint32_t PASSWD  :8;
+    } bit;
+    uint32_t reg;
+} RPI_PWM_CLK_CTL_REG;
+
+typedef union {
+    struct {
+        uint32_t DIVF  :12;
+        uint32_t DIVI  :12;
+        uint32_t PASSWD  :8;
+    } bit;
+    uint32_t reg;
+} RPI_PWM_CLK_DIV_REG;
+
 typedef struct{
-    //31-24 passwd
-    //23-11 unused
-    //10-9 mash control
-    //8 flip, 7 busy, 6 unused, 5 kill, 4 enable
-    //3-0 src
-    uint32_t CTL;
-    //31-24: passwd   5a
-    //23-12: DIVI Integer part of divisor
-    //11-0: DIVF: Fractional part of divisor
-    uint32_t DIV;
+    __IO RPI_PWM_CLK_CTL_REG CTL;
+    __IO RPI_PWM_CLK_DIV_REG DIV;
 } rpi_pwm_clk_t;
 
 extern volatile rpi_pwm_t *rpi_pwm;
@@ -75,15 +138,15 @@ extern volatile rpi_pwm_clk_t *rpi_pwm_clk;
 #ifdef __cplusplus
 extern "C" {
 #endif
-    void pwm_init(uint8_t channel, uint8_t markspace, uint8_t enable);
+    void pwm_init(Rpi_Pwm_Channel channel, uint8_t markspace, uint8_t enable);
 
     void pwm_set_clock(uint32_t divisor);
 
-    void pwm_set_range(uint8_t channel, uint32_t range);
+    void pwm_set_range(Rpi_Pwm_Channel channel, uint32_t range);
 
-    void pwm_set_data(uint8_t channel, uint32_t data);
+    void pwm_set_data(Rpi_Pwm_Channel channel, uint32_t data);
 
-    void pwm_close(uint8_t channel);
+    void pwm_close(Rpi_Pwm_Channel channel);
 
 #ifdef __cplusplus
 }
