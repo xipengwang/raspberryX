@@ -2,10 +2,8 @@
 #define _RPI_GPIO_H
 
 #include "rpi.h"
-
 typedef enum {
     /* RPi B+, RPi2, and RPi3 all use the same header 40 pins header*/
-    /* pin header # = MPU GPIO pin # */
     PIN_03     =  2,
     PIN_05     =  3,
     PIN_07     =  4,
@@ -44,63 +42,71 @@ typedef enum {
     RPI_GPIO_FSEL_ALT4  = 0x03,   /*!< Alternate function 4 0b011 */
     RPI_GPIO_FSEL_ALT5  = 0x02,   /*!< Alternate function 5 0b010 */
     RPI_GPIO_FSEL_MASK  = 0x07    /*!< Function select bits mask 0b111 */
-} Rpi_Function_Select;
+} Rpi_Gpio_Function_Select;
 
 typedef enum {
     RPI_GPIO_DISABLE_PUD  = 0x00,
     RPI_GPIO_PULLDOWN     = 0x01,
     RPI_GPIO_PULLUP       = 0x02,
+} Rpi_Gpio_Pud_Select;
 
-} Rpi_Pud_Select;
+typedef union {
+    struct {
+        uint32_t r0 :32;
+    } bit;
+    uint32_t reg;
+} RPI_GPIO_SHARE_REG;
 
 typedef struct {
-    uint32_t GPFSEL0;
-    uint32_t GPFSEL1;
-    uint32_t GPFSEL2;
-    uint32_t GPFSEL3;
-    uint32_t GPFSEL4;
-    uint32_t GPFSEL5;
-    uint32_t reserved0;
-    uint32_t GPSET0;
-    uint32_t GPSET1;
-    uint32_t reserved1;
-    uint32_t GPCLR0;
-    uint32_t GPCLR1;
-    uint32_t reserved2;
-    uint32_t GPLEV0;
-    uint32_t GPLEV1;
-    uint32_t reserved3;
-    uint32_t GPEDS0;
-    uint32_t GPEDS1;
-    uint32_t reserved4;
-    uint32_t GPREN0;
-    uint32_t GPREN1;
-    uint32_t reserved5;
-    uint32_t GPFEN0;
-    uint32_t GPFEN1;
-    uint32_t reserved6;
-    uint32_t GPHEN0;
-    uint32_t GPHEN1;
-    uint32_t reserved7;
-    uint32_t GPLEN0;
-    uint32_t GPLEN1;
-    uint32_t reserved8;
-    uint32_t GPAREN0;
-    uint32_t GPAREN1;
-    uint32_t reserved9;
-    uint32_t GPAFEN0;
-    uint32_t GPAFEN1;
-    uint32_t reserved10;
-    uint32_t GPPUD;
-    uint32_t GPPUDCLK0;
-    uint32_t GPPUDCLK1;
+    __IO RPI_GPIO_SHARE_REG GPFSEL0;
+    __IO RPI_GPIO_SHARE_REG GPFSEL1;
+    __IO RPI_GPIO_SHARE_REG GPFSEL2;
+    __IO RPI_GPIO_SHARE_REG GPFSEL3;
+    __IO RPI_GPIO_SHARE_REG GPFSEL4;
+    __IO RPI_GPIO_SHARE_REG GPFSEL5;
+    __IO RPI_GPIO_SHARE_REG reserved0;
+    __IO RPI_GPIO_SHARE_REG GPSET0;
+    __IO RPI_GPIO_SHARE_REG GPSET1;
+    __IO RPI_GPIO_SHARE_REG reserved1;
+    __IO RPI_GPIO_SHARE_REG GPCLR0;
+    __IO RPI_GPIO_SHARE_REG GPCLR1;
+    __IO RPI_GPIO_SHARE_REG reserved2;
+    __IO RPI_GPIO_SHARE_REG GPLEV0;
+    __IO RPI_GPIO_SHARE_REG GPLEV1;
+    __IO RPI_GPIO_SHARE_REG reserved3;
+    __IO RPI_GPIO_SHARE_REG GPEDS0;
+    __IO RPI_GPIO_SHARE_REG GPEDS1;
+    __IO RPI_GPIO_SHARE_REG reserved4;
+    __IO RPI_GPIO_SHARE_REG GPREN0;
+    __IO RPI_GPIO_SHARE_REG GPREN1;
+    __IO RPI_GPIO_SHARE_REG reserved5;
+    __IO RPI_GPIO_SHARE_REG GPFEN0;
+    __IO RPI_GPIO_SHARE_REG GPFEN1;
+    __IO RPI_GPIO_SHARE_REG reserved6;
+    __IO RPI_GPIO_SHARE_REG GPHEN0;
+    __IO RPI_GPIO_SHARE_REG GPHEN1;
+    __IO RPI_GPIO_SHARE_REG reserved7;
+    __IO RPI_GPIO_SHARE_REG GPLEN0;
+    __IO RPI_GPIO_SHARE_REG GPLEN1;
+    __IO RPI_GPIO_SHARE_REG reserved8;
+    __IO RPI_GPIO_SHARE_REG GPAREN0;
+    __IO RPI_GPIO_SHARE_REG GPAREN1;
+    __IO RPI_GPIO_SHARE_REG reserved9;
+    __IO RPI_GPIO_SHARE_REG GPAFEN0;
+    __IO RPI_GPIO_SHARE_REG GPAFEN1;
+    __IO RPI_GPIO_SHARE_REG reserved10;
+    __IO RPI_GPIO_SHARE_REG GPPUD;
+    __IO RPI_GPIO_SHARE_REG GPPUDCLK0;
+    __IO RPI_GPIO_SHARE_REG GPPUDCLK1;
 } rpi_gpio_t;
+
+extern volatile rpi_gpio_t *rpi_gpio;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-    void rpi_gpio_fsel(uint8_t pin, uint8_t mode);
+    void rpi_gpio_fsel(uint8_t pin, Rpi_Gpio_Function_Select mode);
     void rpi_gpio_write(uint8_t pin, uint8_t level);
     uint32_t rpi_gpio_read(uint8_t pin);
     uint32_t rpi_gpio_status(uint8_t pin);
@@ -117,6 +123,7 @@ extern "C" {
     void rpi_gpio_enable_async_Fedge(uint8_t pin);
     void rpi_gpio_enable_async_Fedge(uint8_t pin);
     void rpi_gpio_enable_async_Fedge(uint8_t pin);
+    void rpi_gpio_pud(Rpi_Gpio_Pud_Select mode);
     void rpi_gpio_pudclk(uint8_t pin);
 #ifdef __cplusplus
 }

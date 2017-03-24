@@ -7,14 +7,15 @@
 #include <time.h>
 #include <unistd.h>
 #include "rpi.h"
+#include "gpio.h"
+#include "systimer.h"
+#include "pwm.h"
+#include "i2c.h"
 
 uint32_t *rpi_peripherals_base;
 uint32_t rpi_peripherals_size;
 uint32_t *rpi_peripherals;
 
-extern volatile rpi_gpio_t *rpi_gpio;
-extern volatile rpi_sys_timer_t *rpi_sys_timer;
-extern volatile rpi_pwm_t *rpi_pwm;
 static void *mapmem(const char *msg, size_t size, int fd, off_t off)
 {
     void *map = mmap(NULL, size, (PROT_READ | PROT_WRITE), MAP_SHARED, fd, off);
@@ -39,7 +40,10 @@ int rpi_init(void)
         unsigned char buf[4];
         fseek(fp, 4, SEEK_SET);
         if (fread(buf, 1, sizeof(buf), fp) == sizeof(buf))
-            rpi_peripherals_base = (uint32_t *)(buf[0] << 24 | buf[1] << 16 | buf[2] << 8 | buf[3] << 0);
+            rpi_peripherals_base = (uint32_t *)(intptr_t)(buf[0] << 24
+                                                          | buf[1] << 16
+                                                          | buf[2] << 8
+                                                          | buf[3] << 0);
         fseek(fp, 8, SEEK_SET);
         if (fread(buf, 1, sizeof(buf), fp) == sizeof(buf))
             rpi_peripherals_size = (buf[0] << 24 | buf[1] << 16 | buf[2] << 8 | buf[3] << 0);
@@ -56,12 +60,18 @@ int rpi_init(void)
                     strerror(errno)) ;
             goto exit;
         }
-        rpi_peripherals = mapmem("gpio", rpi_peripherals_size, memfd, (uint32_t)rpi_peripherals_base);
+        rpi_peripherals = mapmem("gpio",
+                                 rpi_peripherals_size,
+                                 memfd,
+                                 (uint32_t)(intptr_t)rpi_peripherals_base);
 
         if (rpi_peripherals == MAP_FAILED) goto exit;
         rpi_gpio = (rpi_gpio_t*)(rpi_peripherals + RPI_GPIO_BASE/4);
         rpi_sys_timer = (rpi_sys_timer_t*)(rpi_peripherals + RPI_SYS_TIMER/4);
         rpi_pwm = (rpi_pwm_t*)(rpi_peripherals + RPI_PWM/4);
+        rpi_pwm_clk = (rpi_pwm_clk_t*) (rpi_peripherals + RPI_PWM_CLK/4);
+        rpi_i2c0 = (rpi_i2c_t*)(rpi_peripherals + RPI_I2C0/4);
+        rpi_i2c1 = (rpi_i2c_t*)(rpi_peripherals + RPI_I2C1/4);
         ok = 0;
     }
     else {

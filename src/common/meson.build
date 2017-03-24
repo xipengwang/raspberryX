@@ -6,6 +6,8 @@ common_src = [
     'sort.c',
     'time_util.c',
     'matrix.c',
+    'math_util.h',
+    'math_util.c',
 ]
 
 common_lib = static_library(

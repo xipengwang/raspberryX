@@ -2,7 +2,8 @@ rpi_src = [
     'gpio.c',
     'pwm.c',
     'rpi.c',
-    'systimer.c',]
+    'systimer.c',
+    'i2c.c']
 
 rpi_lib = static_library(
     'rpi',
