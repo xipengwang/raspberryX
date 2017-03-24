@@ -1,9 +1,11 @@
 #ifndef _RPI_GPIO_H
 #define _RPI_GPIO_H
 
-#include "rpi.h"
+/* RPi B+, RPi2, and RPi3 all use the same header 40 pins header
+ * Number on left side is the pin number on RasPi.
+ * Number on right side is the GPIO number of the CHIP.
+ */
 typedef enum {
-    /* RPi B+, RPi2, and RPi3 all use the same header 40 pins header*/
     PIN_03     =  2,
     PIN_05     =  3,
     PIN_07     =  4,
@@ -33,19 +35,19 @@ typedef enum {
 } Rpi_Gpio_Pin;
 
 typedef enum {
-    RPI_GPIO_FSEL_IN    = 0x00,   /*!< Input 0b000 */
-    RPI_GPIO_FSEL_OUT   = 0x01,   /*!< Output 0b001 */
-    RPI_GPIO_FSEL_ALT0  = 0x04,   /*!< Alternate function 0 0b100 */
-    RPI_GPIO_FSEL_ALT1  = 0x05,   /*!< Alternate function 1 0b101 */
-    RPI_GPIO_FSEL_ALT2  = 0x06,   /*!< Alternate function 2 0b110, */
-    RPI_GPIO_FSEL_ALT3  = 0x07,   /*!< Alternate function 3 0b111 */
-    RPI_GPIO_FSEL_ALT4  = 0x03,   /*!< Alternate function 4 0b011 */
-    RPI_GPIO_FSEL_ALT5  = 0x02,   /*!< Alternate function 5 0b010 */
-    RPI_GPIO_FSEL_MASK  = 0x07    /*!< Function select bits mask 0b111 */
+    RPI_GPIO_FSEL_IN    = 0x00,   /* Input 0b000 */
+    RPI_GPIO_FSEL_OUT   = 0x01,   /* Output 0b001 */
+    RPI_GPIO_FSEL_ALT0  = 0x04,   /* Alternate function 0 0b100 */
+    RPI_GPIO_FSEL_ALT1  = 0x05,   /* Alternate function 1 0b101 */
+    RPI_GPIO_FSEL_ALT2  = 0x06,   /* Alternate function 2 0b110 */
+    RPI_GPIO_FSEL_ALT3  = 0x07,   /* Alternate function 3 0b111 */
+    RPI_GPIO_FSEL_ALT4  = 0x03,   /* Alternate function 4 0b011 */
+    RPI_GPIO_FSEL_ALT5  = 0x02,   /* Alternate function 5 0b010 */
+    RPI_GPIO_FSEL_MASK  = 0x07    /* Function select bits mask  */
 } Rpi_Gpio_Function_Select;
 
 typedef enum {
-    RPI_GPIO_DISABLE_PUD  = 0x00,
+    RPI_GPIO_DISABLE_PUD  = 0x00, /* Disable pull up or pull down */
     RPI_GPIO_PULLDOWN     = 0x01,
     RPI_GPIO_PULLUP       = 0x02,
 } Rpi_Gpio_Pud_Select;
@@ -105,11 +107,12 @@ extern volatile rpi_gpio_t *rpi_gpio;
 #ifdef __cplusplus
 extern "C" {
 #endif
-
     void rpi_gpio_fsel(uint8_t pin, Rpi_Gpio_Function_Select mode);
+
     void rpi_gpio_write(uint8_t pin, uint8_t level);
     uint32_t rpi_gpio_read(uint8_t pin);
     uint32_t rpi_gpio_status(uint8_t pin);
+
     void rpi_gpio_enable_Redge(uint8_t pin);
     void rpi_gpio_disable_Redge(uint8_t pin);
     void rpi_gpio_enable_Fedge(uint8_t pin);
@@ -123,6 +126,7 @@ extern "C" {
     void rpi_gpio_enable_async_Fedge(uint8_t pin);
     void rpi_gpio_enable_async_Fedge(uint8_t pin);
     void rpi_gpio_enable_async_Fedge(uint8_t pin);
+
     void rpi_gpio_pud(Rpi_Gpio_Pud_Select mode);
     void rpi_gpio_pudclk(uint8_t pin);
 #ifdef __cplusplus
