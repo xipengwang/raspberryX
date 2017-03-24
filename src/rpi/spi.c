@@ -51,7 +51,6 @@ void rpi_spi_transfernb(volatile rpi_spi_t *rpi_spi0, char* tbuf, char* rbuf, ui
     // Set TA = 1; Transfer active.
     rpi_spi0->CS.bit.TA = 1;
 
-    //TODO: Timeout
     while ((TXCnt < len)||(RXCnt < len)) {
         // TX fifo not full, so add some more bytes
         // We write byte by byte into FIFO, not word by word
@@ -68,6 +67,8 @@ void rpi_spi_transfernb(volatile rpi_spi_t *rpi_spi0, char* tbuf, char* rbuf, ui
         } else {
             RXCnt = len;
         }
+        if (rpi_spi0->CS.bit.DONE)
+            break;
     }
     // Wait for DONE to be set
     while (rpi_spi0->CS.bit.DONE);
