@@ -2,10 +2,11 @@
 volatile rpi_pwm_t *rpi_pwm;
 volatile rpi_pwm_clk_t* rpi_pwm_clk;
 
-void pwm_init(Rpi_Pwm_Channel channel, uint8_t markspace, uint8_t enable)
+int pwm_init(Rpi_Pwm_Channel channel, uint8_t markspace, uint8_t enable)
 {
     if(rpi_pwm == MAP_FAILED || rpi_pwm_clk == MAP_FAILED)
-        return;
+        return -1;
+
     if(channel == RPI_PWM_CHANNEL_0){
         if (markspace) {
             rpi_pwm->CTL.reg |=  RPI_PWM_CTL_PWEN1_Msk;
@@ -29,6 +30,7 @@ void pwm_init(Rpi_Pwm_Channel channel, uint8_t markspace, uint8_t enable)
             rpi_pwm->CTL.reg &= ~RPI_PWM_CTL_MSEN2_Msk;
         }
     }
+    return 0;
 }
 
 void pwm_set_clock(uint32_t divisor)
@@ -46,7 +48,7 @@ void pwm_set_clock(uint32_t divisor)
     rpi_pwm_clk->DIV.reg = RPI_PWM_PASSWD | (divisor << 12);
 
     rpi_pwm_clk->CTL.reg = RPI_PWM_PASSWD | 0x11;
-  
+
 }
 
 void pwm_set_range(Rpi_Pwm_Channel channel, uint32_t range)

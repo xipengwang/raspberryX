@@ -13,7 +13,7 @@
 
 int main(int argc, char **args)
 {
-    if (rpi_init() ==-1) {
+    if (rpi_init() == -1) {
         printf("initialization failed");
         return -1;
     }
