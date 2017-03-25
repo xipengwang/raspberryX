@@ -24,7 +24,7 @@
 #define RPI_I2C0               0x205000
 #define RPI_I2C1               0x804000
 #define RPI_SPI0               0x204000
-
+#define RPI_UART               0x20100
 #ifdef __cplusplus
 extern "C" {
 #endif
