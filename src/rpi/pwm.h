@@ -5,7 +5,7 @@
 #include "gpio.h"
 #include "common/time_util.h"
 
-#define RPI_PWM_PASSWD 0x5a000000
+#define RPI_PWM_PASSWD (0x5a<<24)
 
 typedef union {
     struct {
@@ -138,7 +138,7 @@ extern volatile rpi_pwm_clk_t *rpi_pwm_clk;
 #ifdef __cplusplus
 extern "C" {
 #endif
-    void pwm_init(Rpi_Pwm_Channel channel, uint8_t markspace, uint8_t enable);
+    int pwm_init(Rpi_Pwm_Channel channel, uint8_t markspace, uint8_t enable);
 
     void pwm_set_clock(uint32_t divisor);
 
