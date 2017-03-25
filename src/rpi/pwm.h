@@ -5,7 +5,7 @@
 #include "gpio.h"
 #include "common/time_util.h"
 
-#define RPI_PWM_PASSWD 0x5a000000
+#define RPI_PWM_PASSWD (0x5a<<24)
 
 typedef union {
     struct {
