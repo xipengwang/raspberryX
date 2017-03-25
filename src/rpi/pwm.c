@@ -13,7 +13,7 @@ void pwm_init(Rpi_Pwm_Channel channel, uint8_t markspace, uint8_t enable)
             rpi_pwm->CTL.reg &=  ~RPI_PWM_CTL_PWEN1_Msk;
         }
         if (enable) {
-            rpi_pwm->CTL.reg |= RPI_PWM_CTL_PWEN1_Msk;
+            rpi_pwm->CTL.reg |= RPI_PWM_CTL_MSEN1_Msk;
         } else {
             rpi_pwm->CTL.reg &= ~RPI_PWM_CTL_MSEN1_Msk;
         }
@@ -24,7 +24,7 @@ void pwm_init(Rpi_Pwm_Channel channel, uint8_t markspace, uint8_t enable)
             rpi_pwm->CTL.reg &=  ~RPI_PWM_CTL_PWEN2_Msk;
         }
         if (enable) {
-            rpi_pwm->CTL.reg |= RPI_PWM_CTL_PWEN2_Msk;
+            rpi_pwm->CTL.reg |= RPI_PWM_CTL_MSEN2_Msk;
         } else {
             rpi_pwm->CTL.reg &= ~RPI_PWM_CTL_MSEN2_Msk;
         }
