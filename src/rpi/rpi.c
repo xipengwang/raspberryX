@@ -61,6 +61,7 @@ int rpi_init(void)
                     strerror(errno)) ;
             goto exit;
         }
+
         rpi_peripherals = mapmem("gpio",
                                  rpi_peripherals_size,
                                  memfd,
@@ -74,6 +75,14 @@ int rpi_init(void)
         rpi_i2c0 = (rpi_i2c_t*)(rpi_peripherals + RPI_I2C0/4);
         rpi_i2c1 = (rpi_i2c_t*)(rpi_peripherals + RPI_I2C1/4);
         rpi_spi0 = (rpi_spi_t*)(rpi_peripherals + RPI_SPI0/4);
+
+        printf("data:0x%X \n", (uint32_t*)rpi_spi0 - rpi_peripherals);
+        puts("--------------");
+
+        printf("CS:0x%X \n", (char*)&rpi_spi0->CS - (char*)rpi_spi0);
+        printf("FIFO:0x%X \n", (char*)&rpi_spi0->FIFO - (char*)rpi_spi0);
+        printf("CLK:0x%X \n", (char*)&rpi_spi0->CLK - (char*)rpi_spi0);
+        printf("DLEN:0x%X \n", (char*)&rpi_spi0->DLEN - (char*)rpi_spi0);
         ok = 0;
     }
     else {

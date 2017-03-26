@@ -33,15 +33,35 @@ void rpi_spi_set_clk_divider(volatile rpi_spi_t *rpi_spi0, uint16_t _divider)
     if(divider & (divider-1)) {
         //not a power of 2
         divider = 2;
-        while (_divider < divider)
+        while (divider < _divider)
             divider *= 2;
     }
     rpi_spi0->CLK.bit.CDIV = divider;
 }
 
+void rpi_spi_chip_select(volatile rpi_spi_t *rpi_spi0, Rpi_Spi_Chip Chip)
+{
+    rpi_spi0->CS.bit.CS = Chip;
+}
+
+void rpi_spi_set_chip_polarity(volatile rpi_spi_t *rpi_spi0, Rpi_Spi_Chip Chip, int level)
+{
+    if (Chip == RPI_CHIP_SELECT_0) {
+        rpi_spi0->CS.bit.CSPOL0 = level;
+    } else if (Chip == RPI_CHIP_SELECT_1) {
+        rpi_spi0->CS.bit.CSPOL1 = level;
+    }
+}
+
 /* Writes (and reads) an number of bytes to SPI */
 void rpi_spi_transfernb(volatile rpi_spi_t *rpi_spi0, char* tbuf, char* rbuf, uint32_t len)
 {
+
+    /* for (int i = 0; i < len; i++) { */
+    /*     rbuf[i] = rpi_spi_transfer(rpi_spi0, tbuf[i]); */
+    /* } */
+
+
     uint32_t TXCnt = 0;
     uint32_t RXCnt = 0;
 
@@ -59,20 +79,60 @@ void rpi_spi_transfernb(volatile rpi_spi_t *rpi_spi0, char* tbuf, char* rbuf, ui
             TXCnt++;
         }
         // Rx fifo not empty, so get the next received bytes
-        if (rbuf) {
-            while(rpi_spi0->CS.bit.RXD &&( RXCnt < len )) {
-                rbuf[RXCnt] = rpi_spi0->FIFO.reg;
-                RXCnt++;
-            }
-        } else {
-            RXCnt = len;
+        while( rpi_spi0->CS.bit.RXD && ( RXCnt < len )) {
+            rbuf[RXCnt] = rpi_spi0->FIFO.reg;
+            RXCnt++;
         }
-        if (rpi_spi0->CS.bit.DONE)
-            break;
     }
     // Wait for DONE to be set
-    while (rpi_spi0->CS.bit.DONE);
+    while (!rpi_spi0->CS.bit.DONE);
 
     // Set TA = 0
     rpi_spi0->CS.bit.TA = 0;
+}
+
+void rpi_spi_writenb(volatile rpi_spi_t *rpi_spi0, char* tbuf, uint32_t len)
+{
+    uint32_t cnt = 0;
+    uint32_t read_data;
+    //clear FIFO
+    rpi_spi0->CS.bit.CLEAR = 0x03;
+    // Set TA = 1; Transfer active.
+    rpi_spi0->CS.bit.TA = 1;
+    for (cnt = 0; cnt < len; cnt++) {
+        while(!rpi_spi0->CS.bit.TXD);
+        rpi_spi0->FIFO.reg = tbuf[cnt];
+        while(rpi_spi0->CS.bit.RXD) {
+            read_data = rpi_spi0->FIFO.reg;
+        }
+    }
+
+    while (!rpi_spi0->CS.bit.DONE) {
+        while(rpi_spi0->CS.bit.RXD) {
+            read_data = rpi_spi0->FIFO.reg;
+        }
+    }
+    // Set TA = 0
+    rpi_spi0->CS.bit.TA = 0;
+}
+
+char rpi_spi_transfer(volatile rpi_spi_t *rpi_spi0, char value)
+{
+    //clear FIFO
+    rpi_spi0->CS.bit.CLEAR = 0x03;
+    // Set TA = 1; Transfer active.
+    rpi_spi0->CS.bit.TA = 1;
+
+    /* Maybe wait for TXD */
+    while (!rpi_spi0->CS.bit.TXD);
+
+    rpi_spi0->FIFO.reg = value;
+
+    while (!rpi_spi0->CS.bit.DONE);
+
+    char ret = rpi_spi0->FIFO.reg;
+
+    rpi_spi0->CS.bit.TA = 0;
+
+    return ret;
 }
