@@ -15,53 +15,59 @@ int main(int argc, char **args)
     if(rpi_init() != -1){
         print_version();
         rpi_gpio_fsel(pin_out, RPI_GPIO_FSEL_OUT);
-        rpi_gpio_fsel(PIN_03, RPI_GPIO_FSEL_IN);
-        rpi_gpio_fsel(PIN_05, RPI_GPIO_FSEL_IN);
 
         //i2c test
         rpi_gpio_fsel(PIN_03, RPI_GPIO_FSEL_ALT0); /* SDA */
         rpi_gpio_fsel(PIN_05, RPI_GPIO_FSEL_ALT0); /* SCL */
-        if(rpi_i2c_init(rpi_i2c0)) {
+        if(rpi_i2c_init(rpi_i2c1)) {
             printf("I2C error \n");
             exit(-1);
         }
 
-        rpi_i2c_setslave(rpi_i2c0, 0x44 & 0xEF);
-        rpi_i2c_set_baudrate(rpi_i2c0, 100);
-        char buf[] = { 0x01, 0x02, 0x11, 0x33 }; // Data to send
+        //7 bit addressing.
+        rpi_i2c_setslave(rpi_i2c1, 0x77);
+        rpi_i2c_setclockdivider(rpi_i2c1, 148);
 
-        for(int i = 0; i < 4 ; i++) {
-            int w_return = rpi_i2c_write(rpi_i2c0, buf, sizeof(buf));
-            if(w_return == RPI_I2C_OK){
-                printf("Write to I2C: %02X  %02X  %02X  %02X \n", buf[0], buf[1], buf[2], buf[3]);
-            } else if (w_return == RPI_I2C_ERROR_NACK){
-                printf("NACK\n");
-            } else if (w_return == RPI_I2C_ERROR_CLKT) {
-                printf("TIME OUT\n");
-            } else if (w_return == RPI_I2C_ERROR_DATA) {
-                printf("DATA REMAINING\n");
-            }
-            int r_return = rpi_i2c_read(rpi_i2c0, buf, sizeof(buf));
-            if (r_return == RPI_I2C_OK) {
-                printf("Read from I2C: %02X  %02X  %02X  %02X \n", buf[0], buf[1], buf[2], buf[3]);
-            } else if (r_return == RPI_I2C_ERROR_NACK){
-                printf("NACK\n");
-            } else if (r_return == RPI_I2C_ERROR_CLKT) {
-                printf("TIME OUT\n");
-            } else if (r_return == RPI_I2C_ERROR_DATA) {
-                printf("DATA REMAINING\n");
-            }
-            timeutil_usleep(100);
-        }
+        char buf[] = { 0xD0 }; // Data to send; Chip-ID register
+        char len = sizeof(buf) / sizeof(char);
+        /* double i2c_bytes_wait_us = len * */
+        /*         ((float)rpi_i2c0->DIV.bit.CDIV / RPI_CORE_CLK_HZ) * 1000000 * 9; */
+        /* printf("wait_us:%f \n", i2c_bytes_wait_us); */
+        /* for(int i = 0; i < 1; i++) { */
 
-        rpi_i2c_close(PIN_03, PIN_05);
+        int w_return = rpi_i2c_write(rpi_i2c1, buf, len);
+        /*     if(w_return == RPI_I2C_OK){ */
+        /*         printf("Write to I2C: %02X \n", buf[0]); */
+        /*     } else if (w_return == RPI_I2C_ERROR_NACK){ */
+        /*         printf("NACK\n"); */
+        /*     } else if (w_return == RPI_I2C_ERROR_CLKT) { */
+        /*         printf("TIME OUT\n"); */
+        /*     } else if (w_return == RPI_I2C_ERROR_DATA) { */
+        /*         printf("DATA REMAINING\n"); */
+        /*     } */
 
-        while(1) {
-            rpi_gpio_write(pin_out, 0);
-            timeutil_usleep(100000);
-            rpi_gpio_write(pin_out, 1);
-            timeutil_usleep(100000);
-        }
+        int r_return = rpi_i2c_read(rpi_i2c1, buf, len);
+        /*     if (r_return == RPI_I2C_OK) { */
+        printf("Read from I2C: %02X\n", buf[0]); //Should be 0x55
+        /*     } else if (r_return == RPI_I2C_ERROR_NACK){ */
+        /*         printf("NACK\n"); */
+        /*     } else if (r_return == RPI_I2C_ERROR_CLKT) { */
+        /*         printf("TIME OUT\n"); */
+        /*     } else if (r_return == RPI_I2C_ERROR_DATA) { */
+        /*         printf("DATA REMAINING\n"); */
+        /*     } */
+
+        /*     timeutil_usleep(i2c_bytes_wait_us); */
+        /* } */
+
+        /* rpi_i2c_close(PIN_03, PIN_05); */
+
+        /* while(1) { */
+        /*     rpi_gpio_write(pin_out, 0); */
+        /*     timeutil_usleep(100000); */
+        /*     rpi_gpio_write(pin_out, 1); */
+        /*     timeutil_usleep(100000); */
+        /* } */
     }
 
 

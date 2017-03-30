@@ -19,15 +19,46 @@ void rpi_i2c_close(Rpi_Gpio_Pin SDA_PIN, Rpi_Gpio_Pin SCL_PIN)
 
 void rpi_i2c_setslave(volatile rpi_i2c_t *i2c, uint8_t addr)
 {
-    i2c->A.bit.ADDR = addr;
+    i2c->A.reg = addr;
+    //i2c->A.bit.ADDR = addr;
 }
 
 // SCL = core clock / DIV
 // The reset value is 0x5dc which is 1500.
-// core clock = 2500kHz, which results in SCL reset value as 166khz.
-void rpi_i2c_setclockdivider(volatile rpi_i2c_t *i2c, uint16_t divider)
+// core clock = 250MHz, which results in SCL reset value as 166khz.
+void rpi_i2c_setclockdivider(volatile rpi_i2c_t *i2c, uint16_t _divider)
 {
+    uint16_t divider = _divider;
+    /* if(divider & (divider-1)) { */
+    /*     //not a power of 2 */
+    /*     divider = 2; */
+    /*     while (divider < _divider) */
+    /*         divider *= 2; */
+    /* } */
     i2c->DIV.reg = divider;
+    /*
+      Note: Care must be taken in choosing values for FEDL and REDL
+      as it is possible to cause the BSC master to malfunction by
+      setting values of CDIV/2 or greater.
+      Therefore the delay values should always be set to less than CDIV/2.
+
+     */
+    //i2c->DEL.bit.FEDL = 0x30;
+    //i2c->DEL.bit.REDL = 0x30;
+    //i2c->CLKT.bit.TOUT = 0x40;
+    //printf("DEL: %d, %d\n", i2c->DEL.bit.FEDL, i2c->DEL.bit.REDL);
+    //printf("CDIV:%d\n", i2c->DIV.bit.CDIV / 2 );
+    //printf("CLKT:%d\n", i2c->CLKT.bit.TOUT);
+    //assert(i2c->DIV.bit.CDIV / 2 > i2c->DEL.bit.FEDL);
+    //assert(i2c->DIV.bit.CDIV / 2 > i2c->DEL.bit.REDL);
+    /* printf("0x%X\n", i2c->C.reg); */
+    /* printf("0x%X\n", i2c->S.reg); */
+    /* printf("0x%X\n", i2c->DLEN.reg); */
+    /* printf("0x%X\n", i2c->A.reg); */
+    /* printf("0x%X\n", i2c->FIFO.reg); */
+    /* printf("0x%X\n", i2c->DIV.reg); */
+    /* printf("0x%X\n", i2c->DEL.reg); */
+    /* printf("0x%X\n", i2c->CLKT.reg); */
 }
 
 void rpi_i2c_set_baudrate(volatile rpi_i2c_t *i2c, uint32_t baudrate)
@@ -44,19 +75,15 @@ RPI_I2C_RETURN_STATUS rpi_i2c_read(volatile rpi_i2c_t *i2c, char* buf, uint32_t 
     uint32_t i = 0;
     uint8_t reason = RPI_I2C_OK;
 
+
     // Clear FIFO
     i2c->C.bit.CLEAR = 0x01;
+
     // Clear Status
     i2c->S.reg = RPI_I2C_S_DONE_Msk | RPI_I2C_S_ERR_Msk | RPI_I2C_S_CLKT_Msk;
-    //printf("Status :0x%X\n", i2c->S.reg);
-    // Set Data Length
-    i2c->DLEN.bit.DLEN = len;
-    //printf("LEN :0x%X\n", i2c->DLEN.reg);
-    // Start read
-    i2c->C.reg = RPI_I2C_C_I2CEN_Msk | RPI_I2C_C_ST_Msk | RPI_I2C_C_READ_Msk;
-    //printf("C :0x%X\n", i2c->C.reg);
-    //printf("Status :0x%X\n", i2c->S.reg);
+    i2c->DLEN.reg = len;
 
+    i2c->C.reg = RPI_I2C_C_I2CEN_Msk | RPI_I2C_C_ST_Msk | RPI_I2C_C_READ_Msk;
     while (!(i2c->S.bit.DONE)) {
         while (i2c->S.bit.RXD) {
             // Read from FIFO
@@ -68,7 +95,6 @@ RPI_I2C_RETURN_STATUS rpi_i2c_read(volatile rpi_i2c_t *i2c, char* buf, uint32_t 
 
     // transfer has finished - grab any remaining stuff in FIFO
     while (remaining && i2c->S.bit.RXD) {
-        /* Read from FIFO, no barrier */
         buf[i] = i2c->FIFO.reg;
         i++;
         remaining--;
@@ -93,31 +119,28 @@ RPI_I2C_RETURN_STATUS rpi_i2c_write(volatile rpi_i2c_t *i2c, const char * buf, u
     uint32_t remaining = len;
     uint32_t i = 0;
     uint8_t reason = RPI_I2C_OK;
-
     // Clear FIFO
     i2c->C.bit.CLEAR = 0x01;
+
     // Clear Status
+    //__sync_synchronize();
     i2c->S.reg = RPI_I2C_S_DONE_Msk | RPI_I2C_S_ERR_Msk | RPI_I2C_S_CLKT_Msk;
-    printf("Status :0x%X\n", i2c->S.reg);
+    //__sync_synchronize();
+
     // Set Data Length
     i2c->DLEN.reg = len;
-    //printf("LEN :0x%X\n", i2c->DLEN.reg);
-    //printf("C :0x%X\n", i2c->C.reg);
-    //printf("Status :0x%X\n", i2c->S.reg);
+
     // pre-populate FIFO with max buffer; 16-byte FIFO
     while( remaining && ( i < 16 ) ) {
         i2c->FIFO.bit.DATA = buf[i];
         i++;
         remaining--;
     }
-    printf("Status :0x%X\n", i2c->S.reg);
-    //printf("C :0x%X\n", i2c->C.reg);
     // Start write
-    i2c->C.bit.I2CEN = 1;
-    //printf("C :0x%X\n", i2c->C.reg);
-    i2c->C.bit.ST = 1;
-    //printf("C :0x%X\n", i2c->C.reg);
-    printf("Status :0x%X\n", i2c->S.reg);
+    //XXX: We cannot set bit separately.
+    //i2c->C.bit.I2CEN = 1;
+    //i2c->C.bit.ST = 1;
+    i2c->C.reg = RPI_I2C_C_I2CEN_Msk | RPI_I2C_C_ST_Msk;
 
     // Transfer is over
     while(!(i2c->S.bit.DONE)) {
@@ -128,7 +151,6 @@ RPI_I2C_RETURN_STATUS rpi_i2c_write(volatile rpi_i2c_t *i2c, const char * buf, u
             remaining--;
     	}
     }
-    printf("Status :0x%X\n", i2c->S.reg);
 
     if (i2c->S.bit.ERR) {
         // Received a NACK
@@ -142,8 +164,8 @@ RPI_I2C_RETURN_STATUS rpi_i2c_write(volatile rpi_i2c_t *i2c, const char * buf, u
         // Clear FIFO
         i2c->C.bit.CLEAR = 0x01;
     }
+
     // Clear Status
     i2c->S.reg = RPI_I2C_S_DONE_Msk | RPI_I2C_S_ERR_Msk | RPI_I2C_S_CLKT_Msk;
-    printf("Status :0x%X\n", i2c->S.reg);
     return reason;
 }
