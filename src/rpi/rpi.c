@@ -76,17 +76,16 @@ int rpi_init(void)
         rpi_i2c1 = (rpi_i2c_t*)(rpi_peripherals + RPI_I2C1/4);
         rpi_spi0 = (rpi_spi_t*)(rpi_peripherals + RPI_SPI0/4);
 
-        printf("data:0x%X \n", (char*)rpi_i2c1 - (char*)rpi_peripherals);
-        puts("--------------");
-
-        printf("C:0x%X \n", (char*)&rpi_i2c1->C - (char*)rpi_i2c1);
-        printf("S:0x%X \n", (char*)&rpi_i2c1->S - (char*)rpi_i2c1);
-        printf("S:0x%X \n", (char*)&rpi_i2c1->DLEN - (char*)rpi_i2c1);
-        printf("S:0x%X \n", (char*)&rpi_i2c1->A - (char*)rpi_i2c1);
-        printf("S:0x%X \n", (char*)&rpi_i2c1->FIFO - (char*)rpi_i2c1);
-        printf("S:0x%X \n", (char*)&rpi_i2c1->DIV - (char*)rpi_i2c1);
-        printf("S:0x%X \n", (char*)&rpi_i2c1->DEL - (char*)rpi_i2c1);
-        printf("S:0x%X \n", (char*)&rpi_i2c1->CLKT - (char*)rpi_i2c1);
+        /* printf("data:0x%X \n", (char*)rpi_i2c1 - (char*)rpi_peripherals); */
+        /* puts("--------------"); */
+        /* printf("C:0x%X \n", (char*)&rpi_i2c1->C - (char*)rpi_i2c1); */
+        /* printf("S:0x%X \n", (char*)&rpi_i2c1->S - (char*)rpi_i2c1); */
+        /* printf("S:0x%X \n", (char*)&rpi_i2c1->DLEN - (char*)rpi_i2c1); */
+        /* printf("S:0x%X \n", (char*)&rpi_i2c1->A - (char*)rpi_i2c1); */
+        /* printf("S:0x%X \n", (char*)&rpi_i2c1->FIFO - (char*)rpi_i2c1); */
+        /* printf("S:0x%X \n", (char*)&rpi_i2c1->DIV - (char*)rpi_i2c1); */
+        /* printf("S:0x%X \n", (char*)&rpi_i2c1->DEL - (char*)rpi_i2c1); */
+        /* printf("S:0x%X \n", (char*)&rpi_i2c1->CLKT - (char*)rpi_i2c1); */
         ok = 0;
     }
     else {

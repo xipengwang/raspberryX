@@ -29,12 +29,6 @@ void rpi_i2c_setslave(volatile rpi_i2c_t *i2c, uint8_t addr)
 void rpi_i2c_setclockdivider(volatile rpi_i2c_t *i2c, uint16_t _divider)
 {
     uint16_t divider = _divider;
-    /* if(divider & (divider-1)) { */
-    /*     //not a power of 2 */
-    /*     divider = 2; */
-    /*     while (divider < _divider) */
-    /*         divider *= 2; */
-    /* } */
     i2c->DIV.reg = divider;
     /*
       Note: Care must be taken in choosing values for FEDL and REDL
@@ -43,22 +37,14 @@ void rpi_i2c_setclockdivider(volatile rpi_i2c_t *i2c, uint16_t _divider)
       Therefore the delay values should always be set to less than CDIV/2.
 
      */
-    //i2c->DEL.bit.FEDL = 0x30;
-    //i2c->DEL.bit.REDL = 0x30;
-    //i2c->CLKT.bit.TOUT = 0x40;
+    i2c->DEL.bit.FEDL = 0x30;
+    i2c->DEL.bit.REDL = 0x30;
+    i2c->CLKT.bit.TOUT = 0x40;
     //printf("DEL: %d, %d\n", i2c->DEL.bit.FEDL, i2c->DEL.bit.REDL);
     //printf("CDIV:%d\n", i2c->DIV.bit.CDIV / 2 );
     //printf("CLKT:%d\n", i2c->CLKT.bit.TOUT);
-    //assert(i2c->DIV.bit.CDIV / 2 > i2c->DEL.bit.FEDL);
-    //assert(i2c->DIV.bit.CDIV / 2 > i2c->DEL.bit.REDL);
-    /* printf("0x%X\n", i2c->C.reg); */
-    /* printf("0x%X\n", i2c->S.reg); */
-    /* printf("0x%X\n", i2c->DLEN.reg); */
-    /* printf("0x%X\n", i2c->A.reg); */
-    /* printf("0x%X\n", i2c->FIFO.reg); */
-    /* printf("0x%X\n", i2c->DIV.reg); */
-    /* printf("0x%X\n", i2c->DEL.reg); */
-    /* printf("0x%X\n", i2c->CLKT.reg); */
+    assert(i2c->DIV.bit.CDIV / 2 > i2c->DEL.bit.FEDL);
+    assert(i2c->DIV.bit.CDIV / 2 > i2c->DEL.bit.REDL);
 }
 
 void rpi_i2c_set_baudrate(volatile rpi_i2c_t *i2c, uint32_t baudrate)
