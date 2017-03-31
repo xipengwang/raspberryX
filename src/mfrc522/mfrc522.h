@@ -1,7 +1,8 @@
 /* mfrc522.h
    BSD
-   Modified by Xipeng Wang
+   Xipeng Wang
    Copyright (C) 2016
+   Thanks: https://github.com/mxgxw/MFRC522-python
 */
 
 #ifndef _MFRC522_H

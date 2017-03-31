@@ -27,6 +27,8 @@ int main(int argc, char **argv)
 
     //set spi
     rpi_spi_set_clk_divider(rpi_spi0, 4096);
+
+    //If CE0 PIN is connected to SLAVE CHIP SS PIN.
     rpi_spi_chip_select(rpi_spi0, RPI_CHIP_SELECT_0);
     rpi_spi_set_chip_polarity(rpi_spi0, RPI_CHIP_SELECT_0, LOW);
 

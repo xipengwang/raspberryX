@@ -54,13 +54,8 @@ void rpi_spi_set_chip_polarity(volatile rpi_spi_t *rpi_spi0, Rpi_Spi_Chip Chip, 
 }
 
 /* Writes (and reads) an number of bytes to SPI */
-void rpi_spi_transfernb(volatile rpi_spi_t *rpi_spi0, char* tbuf, char* rbuf, uint32_t len)
+void rpi_spi_transfernb(volatile rpi_spi_t *rpi_spi0, const char* tbuf, char* rbuf, uint32_t len)
 {
-
-    /* for (int i = 0; i < len; i++) { */
-    /*     rbuf[i] = rpi_spi_transfer(rpi_spi0, tbuf[i]); */
-    /* } */
-
 
     uint32_t TXCnt = 0;
     uint32_t RXCnt = 0;
@@ -91,10 +86,9 @@ void rpi_spi_transfernb(volatile rpi_spi_t *rpi_spi0, char* tbuf, char* rbuf, ui
     rpi_spi0->CS.bit.TA = 0;
 }
 
-void rpi_spi_writenb(volatile rpi_spi_t *rpi_spi0, char* tbuf, uint32_t len)
+void rpi_spi_writenb(volatile rpi_spi_t *rpi_spi0, const char* tbuf, uint32_t len)
 {
     uint32_t cnt = 0;
-    uint32_t read_data;
     //clear FIFO
     rpi_spi0->CS.bit.CLEAR = 0x03;
     // Set TA = 1; Transfer active.
@@ -103,20 +97,20 @@ void rpi_spi_writenb(volatile rpi_spi_t *rpi_spi0, char* tbuf, uint32_t len)
         while(!rpi_spi0->CS.bit.TXD);
         rpi_spi0->FIFO.reg = tbuf[cnt];
         while(rpi_spi0->CS.bit.RXD) {
-            read_data = rpi_spi0->FIFO.reg;
+            rpi_spi0->FIFO.reg;
         }
     }
 
     while (!rpi_spi0->CS.bit.DONE) {
         while(rpi_spi0->CS.bit.RXD) {
-            read_data = rpi_spi0->FIFO.reg;
+            rpi_spi0->FIFO.reg;
         }
     }
     // Set TA = 0
     rpi_spi0->CS.bit.TA = 0;
 }
 
-char rpi_spi_transfer(volatile rpi_spi_t *rpi_spi0, char value)
+char rpi_spi_transfer(volatile rpi_spi_t *rpi_spi0, const char value)
 {
     //clear FIFO
     rpi_spi0->CS.bit.CLEAR = 0x03;
