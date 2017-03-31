@@ -20,7 +20,6 @@ void rpi_i2c_close(Rpi_Gpio_Pin SDA_PIN, Rpi_Gpio_Pin SCL_PIN)
 void rpi_i2c_setslave(volatile rpi_i2c_t *i2c, uint8_t addr)
 {
     i2c->A.reg = addr;
-    //i2c->A.bit.ADDR = addr;
 }
 
 // SCL = core clock / DIV
@@ -100,110 +99,39 @@ RPI_I2C_RETURN_STATUS rpi_i2c_read(volatile rpi_i2c_t *i2c, char* buf, uint32_t 
     return reason;
 }
 
-
-uint32_t bcm2835_peri_read(volatile uint32_t* paddr)
-{
-    uint32_t ret;
-
-    __sync_synchronize();
-    ret = *paddr;
-    __sync_synchronize();
-    return ret;
-
-}
-
-
-#define BCM2835_BSC_C_I2CEN 		0x00008000 /*!< I2C Enable, 0 = disabled, 1 = enabled */
-#define BCM2835_BSC_C_INTR 		0x00000400 /*!< Interrupt on RX */
-#define BCM2835_BSC_C_INTT 		0x00000200 /*!< Interrupt on TX */
-#define BCM2835_BSC_C_INTD 		0x00000100 /*!< Interrupt on DONE */
-#define BCM2835_BSC_C_ST 		0x00000080 /*!< Start transfer, 1 = Start a new transfer */
-#define BCM2835_BSC_C_CLEAR_1 		0x00000020 /*!< Clear FIFO Clear */
-#define BCM2835_BSC_C_CLEAR_2 		0x00000010 /*!< Clear FIFO Clear */
-#define BCM2835_BSC_C_READ 		0x00000001 /*!<	Read transfer */
-
-/* Register masks for BSC_S */
-#define BCM2835_BSC_S_CLKT 		0x00000200 /*!< Clock stretch timeout */
-#define BCM2835_BSC_S_ERR 		0x00000100 /*!< ACK error */
-#define BCM2835_BSC_S_RXF 		0x00000080 /*!< RXF FIFO full, 0 = FIFO is not full, 1 = FIFO is full */
-#define BCM2835_BSC_S_TXE 		0x00000040 /*!< TXE FIFO full, 0 = FIFO is not full, 1 = FIFO is full */
-#define BCM2835_BSC_S_RXD 		0x00000020 /*!< RXD FIFO contains data */
-#define BCM2835_BSC_S_TXD 		0x00000010 /*!< TXD FIFO can accept data */
-#define BCM2835_BSC_S_RXR 		0x00000008 /*!< RXR FIFO needs reading (full) */
-#define BCM2835_BSC_S_TXW 		0x00000004 /*!< TXW FIFO needs writing (full) */
-#define BCM2835_BSC_S_DONE 		0x00000002 /*!< Transfer DONE */
-#define BCM2835_BSC_S_TA 		0x00000001 /*!< Transfer Active */
-
-
-void bcm2835_peri_write(volatile uint32_t* paddr, uint32_t value)
-{
-
-    __sync_synchronize();
-    *paddr = value;
-    __sync_synchronize();
-
-}
-
-
-void bcm2835_peri_set_bits(volatile uint32_t* paddr, uint32_t value, uint32_t mask)
-{
-    uint32_t v = bcm2835_peri_read(paddr);
-    v = (v & ~mask) | (value & mask);
-    bcm2835_peri_write(paddr, v);
-}
-
-
 RPI_I2C_RETURN_STATUS rpi_i2c_write(volatile rpi_i2c_t *i2c, const char * buf, uint32_t len)
 {
     uint32_t remaining = len;
     uint32_t i = 0;
     uint8_t reason = RPI_I2C_OK;
-    /* // Clear FIFO */
-    /* __sync_synchronize(); */
-    /* i2c->C.bit.CLEAR = 0x01; */
-    /* __sync_synchronize(); */
+    // Clear FIFO
+    i2c->C.bit.CLEAR = 0x01;
+    // Clear Status
+    //__sync_synchronize();
+    i2c->S.reg = RPI_I2C_S_DONE_Msk | RPI_I2C_S_ERR_Msk | RPI_I2C_S_CLKT_Msk;
+    //__sync_synchronize();
 
-    /* // Clear Status */
-    /* __sync_synchronize(); */
-    /* i2c->S.reg = RPI_I2C_S_DONE_Msk | RPI_I2C_S_ERR_Msk | RPI_I2C_S_CLKT_Msk; */
-    /* __sync_synchronize(); */
-
-    /* // Set Data Length */
-    /* __sync_synchronize(); */
-    /* i2c->DLEN.reg = len; */
-    /* __sync_synchronize(); */
-
-    /* Clear FIFO */
-    bcm2835_peri_set_bits((uint32_t*)(&(i2c->C)), BCM2835_BSC_C_CLEAR_1 , BCM2835_BSC_C_CLEAR_1 );
-    /* Clear Status */
-    bcm2835_peri_write((uint32_t*)(&(i2c->S)), BCM2835_BSC_S_CLKT | BCM2835_BSC_S_ERR | BCM2835_BSC_S_DONE);
-    /* Set Data Length */
-    bcm2835_peri_write((uint32_t*)(&(i2c->DLEN)), len);
+    // Set Data Length
+    i2c->DLEN.reg = len;
     // pre-populate FIFO with max buffer; 16-byte FIFO
 
     while( remaining && ( i < 16 ) ) {
-
-        bcm2835_peri_write((uint32_t*)(&(i2c->FIFO)), buf[i]);
-        //i2c->FIFO.bit.DATA = buf[i];
+        //XXX: Don't use i2c->FIFO.bit.DATA, since this may cause reading before writing.
+        i2c->FIFO.reg = buf[i];
         i++;
         remaining--;
     }
     // Start write
-    //XXX: We cannot set bit separately.
+    //XXX!!!: We cannot set bit separately.
     //i2c->C.bit.I2CEN = 1;
     //i2c->C.bit.ST = 1;
-    bcm2835_peri_write((uint32_t*)(&(i2c->C)), BCM2835_BSC_C_I2CEN | BCM2835_BSC_C_ST);
-    /* __sync_synchronize(); */
-    /* mem_write_32((uint32_t*)(&(i2c->C)), RPI_I2C_C_I2CEN_Msk | RPI_I2C_C_ST_Msk); */
-    /* //i2c->C.reg = RPI_I2C_C_I2CEN_Msk | RPI_I2C_C_ST_Msk; */
-    /* __sync_synchronize(); */
+    i2c->C.reg = RPI_I2C_C_I2CEN_Msk | RPI_I2C_C_ST_Msk;
 
     // Transfer is over
-    while(!(bcm2835_peri_read((uint32_t*)(&(i2c->S))) & BCM2835_BSC_S_DONE )) {
-          //while(!(mem_read_32((uint32_t*)(&(i2c->S))) & RPI_I2C_S_DONE_Msk)/*!(i2c->S.bit.DONE) */) {
-        while ( remaining && (bcm2835_peri_read((uint32_t*)(&(i2c->S))) & BCM2835_BSC_S_TXD )) {
+    while(!(i2c->S.bit.DONE)) {
+        while (remaining && (i2c->S.bit.TXD)) {
             // Write to FIFO
-            i2c->FIFO.bit.DATA = buf[i];
+            i2c->FIFO.reg = buf[i];
             i++;
             remaining--;
     	}

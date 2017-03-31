@@ -12,6 +12,7 @@
 #define BMP180_I2CADDR            0x77
 
 //Operating Modes
+//Always us BMP180_ULTRALOWPOWER in this example
 #define BMP180_ULTRALOWPOWER      0
 #define BMP180_STANDARD           1
 #define BMP180_HIGHRES            2
@@ -40,6 +41,7 @@
 
 //example: BMP180
 
+uint8_t read_8(volatile rpi_i2c_t *rpi_i2c, char *buf);
 uint16_t read_16(volatile rpi_i2c_t *rpi_i2c, char *buf);
 void get_cal(volatile rpi_i2c_t *rpi_i2c, uint16_t *cal_AC1, uint16_t *cal_AC2, uint16_t *cal_AC3,
              uint16_t *cal_AC4, uint16_t *cal_AC5, uint16_t *cal_AC6,
@@ -64,7 +66,7 @@ int main(int argc, char **args)
 
         //7 bit addressing.
         rpi_i2c_setslave(rpi_i2c1, BMP180_I2CADDR);
-        rpi_i2c_setclockdivider(rpi_i2c1, 148);
+        rpi_i2c_setclockdivider(rpi_i2c1, 1024);
 
         //Get default chipID, it should be 0X55.
         char buf[] = { BMP180_ID }; // Data to send; Chip-ID register
@@ -116,29 +118,91 @@ int main(int argc, char **args)
                 &cal_B1, &cal_B2,
                 &cal_MB, &cal_MC, &cal_MD);
 
+        /* int16_t AC1 = (int16_t)cal_AC1; */
+        /* int16_t AC2 = (int16_t)cal_AC2; */
+        /* int16_t AC3 = (int16_t)cal_AC3; */
+        /* uint16_t AC4 = cal_AC4; */
+        /* uint16_t AC5 = cal_AC5; */
+        /* uint16_t AC6 = cal_AC6; */
+        /* int16_t B1 = (int16_t)cal_B1; */
+        /* int16_t B2 = (int16_t)cal_B2; */
+        /* int16_t MB = (int16_t)cal_MB; */
+        /* int16_t MC = (int16_t)cal_MC; */
+        /* int16_t MD = (int16_t)cal_MD; */
+
+        int16_t AC1 = 408;
+        int16_t AC2 = -72;
+        int16_t AC3 = -14383;
+        uint16_t AC4 = 32741;
+        uint16_t AC5 = 32757;
+        uint16_t AC6 = 23153;
+        int16_t B1 = 6190;
+        int16_t B2 = 4;
+        int16_t MB = -32768;
+        int16_t MC = -8711;
+        int16_t MD = 2868;
 
 
 
+        //get temperature and pressure
         char command[2] = {BMP180_CONTROL , BMP180_READTEMPCMD};
         rpi_i2c_write(rpi_i2c1, command, 2);
-        //rpi_i2c_write(rpi_i2c1, &command[0], 1);
-        //rpi_i2c_write(rpi_i2c1, &command[1], 1);
-        timeutil_usleep(30);
-        char reg[2] = {BMP180_TEMPDATA, BMP180_TEMPDATA+1};
-        uint16_t T_raw = read_16(rpi_i2c1, reg);
+        timeutil_usleep(5);
+        char t_reg[1] = {BMP180_TEMPDATA};
+        long T_raw = read_16(rpi_i2c1, t_reg);
 
-        long X1 = ((T_raw - cal_AC6) * cal_AC5) >> 15;
-        long X2 = ((int16_t)cal_MC << 11) / (X1 + (int16_t)cal_MD);
+        char p_command[2] = {BMP180_CONTROL , BMP180_READPRESSURECMD};
+        char pressure_reg[3] = {BMP180_PRESSUREDATA, BMP180_PRESSUREDATA+1, BMP180_PRESSUREDATA+2};
+        rpi_i2c_write(rpi_i2c1, p_command, 2);
+        timeutil_usleep(8);
+        uint8_t msb = read_8(rpi_i2c1, &pressure_reg[0]);
+        uint8_t lsb = read_8(rpi_i2c1, &pressure_reg[1]);
+        uint8_t xlsb = read_8(rpi_i2c1, &pressure_reg[2]);
+        long P_raw = ((msb << 16) + (lsb << 8) + xlsb) >> 8;
+
+        T_raw = 27898;
+        P_raw = 23843;
+
+        long X1 = ((T_raw - AC6) * AC5) >> 15;
+        long X2 = (MC << 11) / (X1 + MD);
         long B5 = X1 + X2;
         double temp = ((B5 + 8) >> 4) / 10.0;
 
-        printf("%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d %d\n",
-               (int16_t)cal_AC1, (int16_t)cal_AC2, (int16_t)cal_AC3,
-               cal_AC4, cal_AC5, cal_AC6,
-               (int16_t)cal_B1, (int16_t)cal_B2,
-               (int16_t)cal_MB, (int16_t)cal_MC, (int16_t)cal_MD, T_raw);
+        printf("temperature %f *C \n", temp);
 
-        printf("temperature %f \n", temp);
+        long p;
+
+        long B6 = B5 - 4000;
+        X1 = (B2 * (B6*B6) >> 12) >> 11;
+        X2 = (AC2 * B6) >> 11;
+        long X3 = X1 + X2;
+        long B3 = ((AC1*4+X3)+2)/4;
+        printf("B6,X3,B3:%ld,%ld,%ld\n", B6,X3,B3);
+        X1 = (AC3 * B6) >> 13;
+        X2 = (B1*(B6*B6)>>12)>>16;
+        X3 = (X1+X2+2) >> 2;
+        printf("X1,X2,X3:%ld,%ld,%ld\n", X1,X2,X3);
+        unsigned long B4 = (AC4 * (unsigned long)(X3 + 32768)) >> 15;
+        unsigned long B7 = (unsigned long)(P_raw-B3)*50000;
+        printf("B4,B7:%ld,%ld\n", B4,B7);
+        if(B7 < 0x80000000) {
+            p = (B7 * 2) / B4;
+        } else {
+            p = (B7 / B4) * 2;
+        }
+        X1 = (p >> 8) * (p >> 8);
+        X1 = (X1 * 3038) >> 16;
+        X2 = (-7357 * p) >> 16;
+        p = p + ((X1 + X2 + 3791) >> 4);
+        double pressure = p * 0.01;
+        printf("pressure %fhPa \n", pressure);
+
+
+        printf("%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d %ld\n",
+               AC1, AC2, AC3,
+               AC4, AC5, AC6,
+               B1, B2,
+               MB, MC, MD, T_raw);
 
         //rpi_i2c_close(PIN_03, PIN_05);
 
@@ -161,6 +225,16 @@ uint16_t read_16(volatile rpi_i2c_t *rpi_i2c, char *buf)
     rpi_i2c_write(rpi_i2c, buf, 1);
     rpi_i2c_read(rpi_i2c, rbuf, 2);
     ret = rbuf[0] << 8 | rbuf[1];
+    return ret;
+}
+
+uint8_t read_8(volatile rpi_i2c_t *rpi_i2c, char *buf)
+{
+    uint16_t ret;
+    char rbuf[1];
+    rpi_i2c_write(rpi_i2c, buf, 1);
+    rpi_i2c_read(rpi_i2c, rbuf, 1);
+    ret = rbuf[0];
     return ret;
 }
 
