@@ -107,7 +107,7 @@ typedef union {
 typedef union {
     struct {
         uint32_t DATA :8;
-        uint32_t r0 :24;
+        uint32_t r0 :16;
     } bit;
     uint32_t reg;
 } RPI_I2C_FIFO_REG;

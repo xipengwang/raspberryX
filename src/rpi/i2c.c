@@ -20,7 +20,6 @@ void rpi_i2c_close(Rpi_Gpio_Pin SDA_PIN, Rpi_Gpio_Pin SCL_PIN)
 void rpi_i2c_setslave(volatile rpi_i2c_t *i2c, uint8_t addr)
 {
     i2c->A.reg = addr;
-    //i2c->A.bit.ADDR = addr;
 }
 
 // SCL = core clock / DIV
@@ -107,7 +106,6 @@ RPI_I2C_RETURN_STATUS rpi_i2c_write(volatile rpi_i2c_t *i2c, const char * buf, u
     uint8_t reason = RPI_I2C_OK;
     // Clear FIFO
     i2c->C.bit.CLEAR = 0x01;
-
     // Clear Status
     //__sync_synchronize();
     i2c->S.reg = RPI_I2C_S_DONE_Msk | RPI_I2C_S_ERR_Msk | RPI_I2C_S_CLKT_Msk;
@@ -115,24 +113,25 @@ RPI_I2C_RETURN_STATUS rpi_i2c_write(volatile rpi_i2c_t *i2c, const char * buf, u
 
     // Set Data Length
     i2c->DLEN.reg = len;
-
     // pre-populate FIFO with max buffer; 16-byte FIFO
+
     while( remaining && ( i < 16 ) ) {
-        i2c->FIFO.bit.DATA = buf[i];
+        //XXX: Don't use i2c->FIFO.bit.DATA, since this may cause reading before writing.
+        i2c->FIFO.reg = buf[i];
         i++;
         remaining--;
     }
     // Start write
-    //XXX: We cannot set bit separately.
+    //XXX!!!: We cannot set bit separately.
     //i2c->C.bit.I2CEN = 1;
     //i2c->C.bit.ST = 1;
     i2c->C.reg = RPI_I2C_C_I2CEN_Msk | RPI_I2C_C_ST_Msk;
 
     // Transfer is over
     while(!(i2c->S.bit.DONE)) {
-        while ( remaining && i2c->S.bit.TXD) {
+        while (remaining && (i2c->S.bit.TXD)) {
             // Write to FIFO
-            i2c->FIFO.bit.DATA = buf[i];
+            i2c->FIFO.reg = buf[i];
             i++;
             remaining--;
     	}
