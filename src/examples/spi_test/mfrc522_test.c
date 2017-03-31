@@ -33,7 +33,7 @@ int main(int argc, char **argv)
         return -1;
     }
 
-    rpi_gpio_fsel(PIN_26, RPI_GPIO_FSEL_ALT0); /* CE1 */
+    //CE0 PIN is connected to SLAVE chip select PIN.
     rpi_gpio_fsel(PIN_24, RPI_GPIO_FSEL_ALT0); /* CE0 */
     rpi_gpio_fsel(PIN_21, RPI_GPIO_FSEL_ALT0); /* MISO */
     rpi_gpio_fsel(PIN_19, RPI_GPIO_FSEL_ALT0); /* MOSI */
@@ -46,35 +46,25 @@ int main(int argc, char **argv)
     }
     mfrc522_card_t card_data;
     while(1){
-        //check timer
-        /* uint8_t v = mfrc522_read_data(MFRC522_ComIrqReg); */
-        /* if(CHECK_BITS(v,TimerIRq_MFRC522)){ */
-        /*     printf("Receive data: 0x%02X \n", v); */
-        /*     mfrc522_clear_bit(MFRC522_ComIrqReg,SET1_MFRC522); */
-        /*     //break; */
-        /* } */
-
-
+        //Query the card
         int v = mfrc522_query_card(&card_data);
-        if(v == MFRC522_Return_Status_OK){
-            printf("backbits:0x%02X \n",card_data.numofbits);
+        if(v == MFRC522_Return_Status_OK) {
+            printf("backbits:0x%02X \n", card_data.numofbits);
             printf("successful!\n");
-        }
-        else if(v == MFRC522_Return_Status_Timeout){
+        } else if(v == MFRC522_Return_Status_Timeout) {
             printf("timeout!\n");
         }
 
+        //You need query card before calling this function
         v = mfrc522_anticoll(&card_data);
-        if(v == MFRC522_Return_Status_OK){
+        if(v == MFRC522_Return_Status_OK) {
             printf("Receive data:");
-            for(int i=0;i<card_data.len;i++){
+            for(int i = 0; i < card_data.len; i++){
                 printf(" 0x%02X,", card_data.data[i]);
             }
             printf("\n");
             printf("len: %d \n", card_data.len);
-            //printf("successful!\n");
-        }
-        else if(v == MFRC522_Return_Status_Timeout){
+        } else if(v == MFRC522_Return_Status_Timeout){
             printf("timeout!\n");
         }
 

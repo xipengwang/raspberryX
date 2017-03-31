@@ -1,3 +1,10 @@
+/* rpi.h
+   BSD
+   Xipeng Wang
+   Copyright (C) 2016
+   Thanks: http://www.airspayce.com/mikem/bcm2835/
+*/
+
 #ifndef _RPI_H
 #define _RPI_H
 

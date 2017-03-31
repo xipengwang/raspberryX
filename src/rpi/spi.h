@@ -127,9 +127,9 @@ extern "C" {
     void rpi_spi_set_clk_divider(volatile rpi_spi_t *rpi_spi0, uint16_t _divider);
     void rpi_spi_chip_select(volatile rpi_spi_t *rpi_spi0, Rpi_Spi_Chip Chip);
     void rpi_spi_set_chip_polarity(volatile rpi_spi_t *rpi_spi0, Rpi_Spi_Chip Chip, int level);
-    void rpi_spi_transfernb(volatile rpi_spi_t *rpi_spi0, char* tbuf, char* rbuf, uint32_t len);
-    void rpi_spi_writenb(volatile rpi_spi_t *rpi_spi0, char* tbuf, uint32_t len);
-    char rpi_spi_transfer( volatile rpi_spi_t *rpi_spi0, char value);
+    void rpi_spi_transfernb(volatile rpi_spi_t *rpi_spi0, const char* tbuf, char* rbuf, uint32_t len);
+    void rpi_spi_writenb(volatile rpi_spi_t *rpi_spi0, const char* tbuf, uint32_t len);
+    char rpi_spi_transfer( volatile rpi_spi_t *rpi_spi0, const char value);
 
 
 #ifdef __cplusplus

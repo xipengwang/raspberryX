@@ -1,6 +1,6 @@
 /* mfrc522.h
    BSD
-   Modified by Xipeng Wang
+   Xipeng Wang
    Copyright (C) 2016
 */
 
@@ -151,7 +151,8 @@ int mfrc522_check_spi_communication(void)
     }
 }
 
-int write_to_card(mfrc522_card_t *card_data, int MFRC522_Cmd){
+int write_to_card(mfrc522_card_t *card_data, int MFRC522_Cmd)
+{
     uint8_t irqEn = IRqInv_MFRC522 | TxIEn_MFRC522 | RxIEn_MFRC522 |
         IdleIEn_MFRC522 | ErrIEn_MFRC522 | TimerIEn_MFRC522;
 
