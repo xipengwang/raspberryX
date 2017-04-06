@@ -19,17 +19,19 @@ int main(int argc, char **args)
     rpi_gpio_fsel(PIN_08, RPI_GPIO_FSEL_ALT0);
     //define GPIO 15 as rx
     rpi_gpio_fsel(PIN_10, RPI_GPIO_FSEL_ALT0);
-   
+
     rpi_uart_init(rpi_uart);
-    rpi_uart_set_clock(rpi_uart, RPI_UART_CLOCK_DIVIDER_2048); //600khz
-    
+    rpi_uart_set_clock(rpi_uart, 10000); //250MHz / 10000 = 25000
+
     //send string
     while(1){
-    	char array[6] = "hello\0";
-    	rpi_uart_transmit(rpi_uart, array, 6);
+    	char array[6] = "U";
+    	rpi_uart_transmit(rpi_uart, array, 1);
+        printf("%s \n", array);
+        printf("%d\n",rpi_uart->IBRD.reg);
+        printf("%X\n",rpi_uart->LCRH.reg);
+        printf("%X\n",rpi_uart->CR.reg);
         timeutil_sleep(1);
     }
-
     return 0;
 }
-
