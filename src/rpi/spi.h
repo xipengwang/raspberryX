@@ -29,7 +29,7 @@ typedef union {
         uint32_t CSPOL1 :1;
         uint32_t CSPOL2 :1;
         uint32_t DMA_LEN :1;
-        uint32_t LEN_LONG :16;
+        uint32_t LEN_LONG :1;
         uint32_t r0 :6;
     } bit;
     uint32_t reg;
@@ -54,6 +54,11 @@ typedef union {
 #define RPI_SPI_CS_LEN_LONG_Pos 25
 #define RPI_SPI_CS_LEN_LONG_Msk 0x01 << RPI_SPI_CS_LEN_LONG_Pos
 
+typedef enum
+{
+    RPI_CHIP_SELECT_0 = 0,
+    RPI_CHIP_SELECT_1 = 1
+} Rpi_Spi_Chip;
 
 typedef union {
     struct {
@@ -117,6 +122,14 @@ extern volatile rpi_spi_t *rpi_spi0;
 #ifdef __cplusplus
 extern "C" {
 #endif
+    int rpi_spi_init(volatile rpi_spi_t *rpi_spi0);
+    void rpi_spi_close(Rpi_Gpio_Pin SS, Rpi_Gpio_Pin CLK, Rpi_Gpio_Pin MISO, Rpi_Gpio_Pin MOSI);
+    void rpi_spi_set_clk_divider(volatile rpi_spi_t *rpi_spi0, uint16_t _divider);
+    void rpi_spi_chip_select(volatile rpi_spi_t *rpi_spi0, Rpi_Spi_Chip Chip);
+    void rpi_spi_set_chip_polarity(volatile rpi_spi_t *rpi_spi0, Rpi_Spi_Chip Chip, int level);
+    void rpi_spi_transfernb(volatile rpi_spi_t *rpi_spi0, const char* tbuf, char* rbuf, uint32_t len);
+    void rpi_spi_writenb(volatile rpi_spi_t *rpi_spi0, const char* tbuf, uint32_t len);
+    char rpi_spi_transfer( volatile rpi_spi_t *rpi_spi0, const char value);
 
 
 #ifdef __cplusplus

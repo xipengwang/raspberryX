@@ -138,7 +138,7 @@ extern volatile rpi_pwm_clk_t *rpi_pwm_clk;
 #ifdef __cplusplus
 extern "C" {
 #endif
-    void pwm_init(Rpi_Pwm_Channel channel, uint8_t markspace, uint8_t enable);
+    int pwm_init(Rpi_Pwm_Channel channel, uint8_t markspace, uint8_t enable);
 
     void pwm_set_clock(uint32_t divisor);
 
