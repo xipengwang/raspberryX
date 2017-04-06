@@ -21,7 +21,7 @@ int main(int argc, char **args)
     rpi_gpio_fsel(PIN_10, RPI_GPIO_FSEL_ALT0);
 
     rpi_uart_init(rpi_uart);
-    rpi_uart_set_clock(rpi_uart, 10000); //250MHz / 10000 = 25000
+    rpi_uart_set_clock(rpi_uart, 813); //250MHz / (16 *10000) = 19200
 
     //send string
     while(1){
