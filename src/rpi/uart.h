@@ -7,9 +7,9 @@
 typedef union{
     struct{
     	uint32_t UARTEN:1;
-	uint32_t SIREN: 1;
-	uint32_t SIRLP: 1;
-	uint32_t reserved: 4;
+        uint32_t SIREN: 1;
+        uint32_t SIRLP: 1;
+        uint32_t reserved: 4;
         uint32_t LBE :1;
         uint32_t TXE :1;
         uint32_t RXE :1;
@@ -23,6 +23,7 @@ typedef union{
     } bit;
     uint32_t reg;
 } RPI_UART_CR_REG;//control register
+
 #define RPI_UART_CR_UARTEN_Pos 0
 #define RPI_UART_CR_UARTEN_Msk 0x01 << RPI_UART_CR_UARTEN_pos
 #define RPI_UART_CR_SIREN_Pos 1
@@ -51,12 +52,12 @@ typedef union{
 
 typedef union{
     struct{
-	uint32_t CTS :1;
-	uint32_t DSR :1;
-	uint32_t DCD :1;
-	uint32_t BUSY:1;
-	uint32_t RXFE:1;
-	uint32_t TXFF:1;
+        uint32_t CTS :1;
+        uint32_t DSR :1;
+        uint32_t DCD :1;
+        uint32_t BUSY:1;
+        uint32_t RXFE:1;
+        uint32_t TXFF:1;
         uint32_t RXFF:1;
         uint32_t TXFE:1;
         uint32_t RI:1;
@@ -67,20 +68,21 @@ typedef union{
 
 typedef union{
     struct{
-	uint32_t DATA :8;
-	uint32_t FE :1;
-	uint32_t PE :1;
-	uint32_t BE :1;
-	uint32_t OE :1;
-	uint32_t reserved: 20;	  } bit;
+        uint32_t DATA :8;
+        uint32_t FE :1;
+        uint32_t PE :1;
+        uint32_t BE :1;
+        uint32_t OE :1;
+        uint32_t reserved: 20;
+    } bit;
     uint32_t reg;
 } RPI_UART_DR_REG;//data register
 
 
 typedef union{
     struct{
-	uint32_t IBRD: 16;
-	uint32_t reserved: 16;
+        uint32_t IBRD: 16;
+        uint32_t reserved: 16;
     } bit;
     uint32_t reg;
 } RPI_UART_IBRD_REG; //integer part baudrate divisor
@@ -88,7 +90,7 @@ typedef union{
 
 typedef union{
     struct{
-	uint32_t FBRD: 6;
+        uint32_t FBRD: 6;
         uint32_t reserved: 26;
     } bit;
     uint32_t reg;
@@ -111,7 +113,7 @@ typedef union{
 
 typedef union{
     struct{
-         uint32_t r0: 32;
+        uint32_t r0: 32;
     } bit;
     uint32_t reg;
 } RPI_UART_SHARE_REG;
