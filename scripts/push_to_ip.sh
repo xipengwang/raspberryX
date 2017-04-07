@@ -1,14 +1,13 @@
-
-XROBOT=`dirname $0`/..
-IP=$1
-REMOTE_USER=robotx
+ROBOTX=`dirname $0`/..
+IP=$2
+REMOTE_USER=$1
 
 echo "Pushing to robot $ROBOTID at $IP"
 
-STAGE=/tmp/xrobot_stage
+STAGE=/tmp/robotx_stage
 rm -rf $STAGE
-mkdir -p $STAGE/xrobot/bin $STAGE/xrobot/config $STAGE/xrobot/scripts \
+mkdir -p $STAGE/robotx/bin $STAGE/robotx/config $STAGE/robotx/scripts \
 
-cp -R $XROBOT/bin $XROBOT/config $XROBOT/scripts $STAGE/xrobot
+cp -R $ROBOTX/bin $ROBOTX/config $ROBOTX/scripts $STAGE/robotx
 
-rsync -rzP --delete $STAGE/xrobot $REMOTE_USER@$IP:/home/$REMOTE_USER/
+rsync -rzP --delete $STAGE/robotx $REMOTE_USER@$IP:/home/$REMOTE_USER/

@@ -25,29 +25,29 @@ typedef union{
 } RPI_UART_CR_REG;//control register
 
 #define RPI_UART_CR_UARTEN_Pos 0
-#define RPI_UART_CR_UARTEN_Msk 0x01 << RPI_UART_CR_UARTEN_pos
+#define RPI_UART_CR_UARTEN_Msk 0x01 << RPI_UART_CR_UARTEN_Pos
 #define RPI_UART_CR_SIREN_Pos 1
-#define RPI_UART_CR_SIREN_Msk 0x01 << RPI_UART_CR_SIREN_pos
+#define RPI_UART_CR_SIREN_Msk 0x01 << RPI_UART_CR_SIREN_Pos
 #define RPI_UART_CR_SIRLP_Pos 2
-#define RPI_UART_CR_SIRLP_Msk 0x01 << RPI_UART_CR_SIRLP_pos
+#define RPI_UART_CR_SIRLP_Msk 0x01 << RPI_UART_CR_SIRLP_Pos
 #define RPI_UART_CR_LBE_Pos 7
-#define RPI_UART_CR_LBE_Msk 0x01 << RPI_UART_CR_LBE_pos
+#define RPI_UART_CR_LBE_Msk 0x01 << RPI_UART_CR_LBE_Pos
 #define RPI_UART_CR_TXE_Pos 8
-#define RPI_UART_CR_TXE_Msk 0x01 << RPI_UART_CR_TXE_pos
+#define RPI_UART_CR_TXE_Msk 0x01 << RPI_UART_CR_TXE_Pos
 #define RPI_UART_CR_RXE_Pos 9
-#define RPI_UART_CR_RXE_Msk 0x01 << RPI_UART_CR_RXE_pos
+#define RPI_UART_CR_RXE_Msk 0x01 << RPI_UART_CR_RXE_Pos
 #define RPI_UART_CR_DTR_Pos 10
-#define RPI_UART_CR_DTR_Msk 0x01 << RPI_UART_CR_DTR_pos
+#define RPI_UART_CR_DTR_Msk 0x01 << RPI_UART_CR_DTR_Pos
 #define RPI_UART_CR_RTS_Pos 11
-#define RPI_UART_CR_RTS_Msk 0x01 << RPI_UART_CR_RTS_pos
+#define RPI_UART_CR_RTS_Msk 0x01 << RPI_UART_CR_RTS_Pos
 #define RPI_UART_CR_OUT1_Pos 12
-#define RPI_UART_CR_OUT1_Msk 0x01 << RPI_UART_CR_OUT1_pos
+#define RPI_UART_CR_OUT1_Msk 0x01 << RPI_UART_CR_OUT1_Pos
 #define RPI_UART_CR_OUT2_Pos 13
-#define RPI_UART_CR_OUT2_Msk 0x01 << RPI_UART_CR_OUT2_pos
+#define RPI_UART_CR_OUT2_Msk 0x01 << RPI_UART_CR_OUT2_Pos
 #define RPI_UART_CR_RTSEN_Pos 14
-#define RPI_UART_CR_RTSEN_Msk 0x01 << RPI_UART_CR_RTSEN_pos
+#define RPI_UART_CR_RTSEN_Msk 0x01 << RPI_UART_CR_RTSEN_Pos
 #define RPI_UART_CR_CTSEN_Pos 15
-#define RPI_UART_CR_CTSEN_Msk 0x01 << RPI_UART_CR_CTSEN_pos
+#define RPI_UART_CR_CTSEN_Msk 0x01 << RPI_UART_CR_CTSEN_Pos
 
 
 typedef union{
@@ -78,6 +78,15 @@ typedef union{
     uint32_t reg;
 } RPI_UART_DR_REG;//data register
 
+
+#define RPI_UART_DR_FE_Pos 8
+#define RPI_UART_DR_FE_Msk 0x01 << RPI_UART_DR_FE_Pos
+#define RPI_UART_DR_PE_Pos 9
+#define RPI_UART_DR_PE_Msk 0x01 << RPI_UART_DR_PE_Pos
+#define RPI_UART_DR_BE_Pos 10
+#define RPI_UART_DR_BE_Msk 0x01 << RPI_UART_DR_BE_Pos
+#define RPI_UART_DR_OE_Pos 11
+#define RPI_UART_DR_OE_Msk 0x01 << RPI_UART_DR_OE_Pos
 
 typedef union{
     struct{
@@ -156,8 +165,12 @@ extern volatile rpi_uart_t *rpi_uart;
 
 int rpi_uart_init(volatile rpi_uart_t* rpi_uart);
 void rpi_uart_set_baudrate(volatile rpi_uart_t* rpi_uart, uint16_t baudrate);
+
+void rpi_uart_putc(volatile rpi_uart_t* rpi_uart, char c);
 void rpi_uart_transmit(volatile rpi_uart_t* rpi_uart, char* tbuf, uint32_t len);
-void rpi_uart_receive(volatile rpi_uart_t* rpi_uart, char* rbuf, uint32_t len);
+
+char rpi_uart_getc(volatile rpi_uart_t* rpi_uart);
+int rpi_uart_receive(volatile rpi_uart_t* rpi_uart, char* rbuf, uint32_t len);
 
 #ifdef cplusplus
 extern "C" {
