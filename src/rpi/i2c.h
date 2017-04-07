@@ -1,5 +1,11 @@
 #ifndef _RPI_I2C_H
 #define _RPI_I2C_H
+/*
+  Add "dtparam=i2c_vc=on" to /boot/config.txt;
+  So you can see both i2c0 and i2c1 interface.
+
+  However, be aware that i2c0 or i2c1 may not work. Use oscilloscope to check the clock signals.
+ */
 
 #include "rpi.h"
 #include "gpio.h"
@@ -101,7 +107,7 @@ typedef union {
 typedef union {
     struct {
         uint32_t DATA :8;
-        uint32_t r0 :24;
+        uint32_t r0 :16;
     } bit;
     uint32_t reg;
 } RPI_I2C_FIFO_REG;

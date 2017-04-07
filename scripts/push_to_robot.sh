@@ -1,2 +1,2 @@
-XROBOT=`dirname $0`/..
-$XROBOT/scripts/push_to_ip.sh 192.168.0.110
+ROBOTX=`dirname $0`/..
+$ROBOTX/scripts/push_to_ip.sh robotx 192.168.0.110

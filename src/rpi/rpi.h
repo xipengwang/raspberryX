@@ -1,3 +1,10 @@
+/* rpi.h
+   BSD
+   Xipeng Wang
+   Copyright (C) 2016
+   Thanks: http://www.airspayce.com/mikem/bcm2835/
+*/
+
 #ifndef _RPI_H
 #define _RPI_H
 
@@ -20,10 +27,11 @@
 #define RPI_GPIO_BASE          0x200000
 #define RPI_SYS_TIMER          0x3000
 #define RPI_PWM                0x20C000
-#define RPI_PWM_CLK	           0x1010a4
+#define RPI_PWM_CLK	           0x1010a0
 #define RPI_I2C0               0x205000
 #define RPI_I2C1               0x804000
-
+#define RPI_SPI0               0x204000
+#define RPI_UART               0x201000
 #ifdef __cplusplus
 extern "C" {
 #endif

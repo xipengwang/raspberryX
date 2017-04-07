@@ -6,5 +6,7 @@
 #include "systimer.h"
 #include "pwm.h"
 #include "i2c.h"
+#include "spi.h"
+#include "uart.h"
 
 #endif
