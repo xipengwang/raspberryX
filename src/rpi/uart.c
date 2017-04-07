@@ -27,17 +27,25 @@ int rpi_uart_init(volatile rpi_uart_t *rpi_uart)
     rpi_uart->CR.bit.RXE = 0;
     //RTS
     rpi_uart->CR.bit.RTS = 1;
+    //set freq
+    rpi_uart_set_baudrate(rpi_uart, RPI_UART_BAUD_RATE_9600);
     //enable uart
     rpi_uart->CR.bit.UARTEN = 1;
-    printf("%x \n",rpi_uart->CR.reg);
-
     return 0;
 }
 
-void rpi_uart_set_clock(volatile rpi_uart_t* rpi_uart, uint16_t divider)
+void rpi_uart_set_baudrate(volatile rpi_uart_t* rpi_uart, uint16_t baudrate)
 {
     rpi_uart->CR.bit.UARTEN = 0;
-    rpi_uart->IBRD.reg = divider;
+    if (baudrate == RPI_UART_BAUD_RATE_9600) {
+        rpi_uart->IBRD.reg = 325;
+    } else if (baudrate == RPI_UART_BAUD_RATE_11520) {
+        rpi_uart->IBRD.reg = 271;
+    } else {
+        //50MHz / (16 * baudrate)
+        rpi_uart->IBRD.reg = (50000000 >> 4) / baudrate;
+    }
+    rpi_uart->FBRD.reg = 0;
     rpi_uart->CR.bit.UARTEN = 1;
 }
 
@@ -62,16 +70,16 @@ void rpi_uart_receive(volatile rpi_uart_t* rpi_uart, char* rbuf, uint32_t len)
         if(!rpi_uart->FR.bit.RXFF){
             rbuf[RXCnt] = rpi_uart->DR.bit.DATA;
             RXCnt++;
-            if(rpi_uart->DR.bit.FE){
+            if (rpi_uart->DR.bit.FE) {
                 printf("frame error\n");
             }
-            if(rpi_uart->DR.bit.PE){
+            if (rpi_uart->DR.bit.PE) {
                 printf("parity error\n");
             }
-            if(rpi_uart->DR.bit.BE){
+            if (rpi_uart->DR.bit.BE) {
                 printf("break error\n");
             }
-            if(rpi_uart->DR.bit.OE){
+            if (rpi_uart->DR.bit.OE) {
                 printf("Overrun error\n");
             }
         }

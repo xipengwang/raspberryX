@@ -120,10 +120,9 @@ typedef union{
 
 typedef enum
 {
-    RPI_UART_CLOCK_DIVIDER_4096 = 4096, //7627.53hz
-    RPI_UART_CLOCK_DIVIDER_2048 = 2048 //15251.34hz
-
-} RPI_UART_CLK_DIVIDER;
+    RPI_UART_BAUD_RATE_9600 = 9600,
+    RPI_UART_BAUD_RATE_11520 = 11520
+} RPI_UART_BAUD_RATE;
 
 typedef struct{
     __IO RPI_UART_DR_REG DR;
@@ -131,7 +130,7 @@ typedef struct{
     __IO RPI_UART_SHARE_REG reserved0; //0x08
     __IO RPI_UART_SHARE_REG reserved1; //0xC
     __IO RPI_UART_SHARE_REG reserved2; //0x10
-    __IO RPI_UART_SHARE_REG reserved3; ////0x14
+    __IO RPI_UART_SHARE_REG reserved3; //0x14
     __IO RPI_UART_FR_REG FR; //0x18
     __IO RPI_UART_SHARE_REG reserved4; //0x1C
     __IO RPI_UART_SHARE_REG ILRP; //0x20
@@ -156,10 +155,9 @@ typedef struct{
 extern volatile rpi_uart_t *rpi_uart;
 
 int rpi_uart_init(volatile rpi_uart_t* rpi_uart);
-void rpi_uart_set_clock(volatile rpi_uart_t* rpi_uart, uint16_t divider);
+void rpi_uart_set_baudrate(volatile rpi_uart_t* rpi_uart, uint16_t baudrate);
 void rpi_uart_transmit(volatile rpi_uart_t* rpi_uart, char* tbuf, uint32_t len);
 void rpi_uart_receive(volatile rpi_uart_t* rpi_uart, char* rbuf, uint32_t len);
-
 
 #ifdef cplusplus
 extern "C" {
