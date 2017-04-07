@@ -74,20 +74,22 @@ void rpi_uart_transmit(volatile rpi_uart_t* rpi_uart, char* tbuf, uint32_t len)
 char rpi_uart_getc(volatile rpi_uart_t* rpi_uart)
 {
     char c = '\0';
+    uint32_t dr;
     if(!rpi_uart->FR.bit.RXFE) {
-         c = rpi_uart->DR.bit.DATA;
-        /* if (rpi_uart->DR.bit.FE) { */
-        /*     printf("frame error\n"); */
-        /* } */
-        /* if (rpi_uart->DR.bit.PE) { */
-        /*     printf("parity error\n"); */
-        /* } */
-        /* if (rpi_uart->DR.bit.BE) { */
-        /*     printf("break error\n"); */
-        /* } */
-        /* if (rpi_uart->DR.bit.OE) { */
-        /*     printf("Overrun error\n"); */
-        /* } */
+        dr = rpi_uart->DR.bit.DATA;
+        c = 0xFF & dr;
+        if (dr & RPI_UART_DR_FE_Msk) {
+            printf("ALERT: frame error\n");
+        }
+        if (dr & RPI_UART_DR_PE_Msk) {
+            printf("ALERT: parity error\n");
+        }
+        if (dr & RPI_UART_DR_BE_Msk) {
+            printf("ALERT: break error\n");
+        }
+        if (dr & RPI_UART_DR_OE_Msk) {
+            printf("ALERT Overrun error\n");
+        }
     }
     return c;
 }
@@ -95,21 +97,23 @@ char rpi_uart_getc(volatile rpi_uart_t* rpi_uart)
 int rpi_uart_receive(volatile rpi_uart_t* rpi_uart, char* rbuf, uint32_t len)
 {
     uint32_t RXCnt = 0;
+    uint32_t dr;
     while(RXCnt < len && !rpi_uart->FR.bit.RXFE){
-        rbuf[RXCnt] = rpi_uart->DR.bit.DATA;
+        dr = rpi_uart->DR.bit.DATA;
+        rbuf[RXCnt] = 0xFF & dr;
         RXCnt++;
-        /* if (rpi_uart->DR.bit.FE) { */
-        /*     printf("frame error\n"); */
-        /* } */
-        /* if (rpi_uart->DR.bit.PE) { */
-        /*     printf("parity error\n"); */
-        /* } */
-        /* if (rpi_uart->DR.bit.BE) { */
-        /*     printf("break error\n"); */
-        /* } */
-        /* if (rpi_uart->DR.bit.OE) { */
-        /*     printf("Overrun error\n"); */
-        /* } */
+        if (dr & RPI_UART_DR_FE_Msk) {
+            printf("ALERT: frame error\n");
+        }
+        if (dr & RPI_UART_DR_PE_Msk) {
+            printf("ALERT: parity error\n");
+        }
+        if (dr & RPI_UART_DR_BE_Msk) {
+            printf("ALERT: break error\n");
+        }
+        if (dr & RPI_UART_DR_OE_Msk) {
+            printf("ALERT Overrun error\n");
+        }
     }
     while(!rpi_uart->FR.bit.RXFE) {
         rbuf[RXCnt] = rpi_uart->DR.bit.DATA;
