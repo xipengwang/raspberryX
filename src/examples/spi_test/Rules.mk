@@ -1,6 +1,6 @@
 .PHONY: spi_test spi_test_clean
 
-spi_test: common rpi
+spi_test: common rpi mfrc522
 
 spi_test:
 	@echo $@

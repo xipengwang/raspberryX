@@ -48,7 +48,6 @@ void pwm_set_clock(uint32_t divisor)
     rpi_pwm_clk->DIV.reg = RPI_PWM_PASSWD | (divisor << 12);
 
     rpi_pwm_clk->CTL.reg = RPI_PWM_PASSWD | 0x11;
-
 }
 
 void pwm_set_range(Rpi_Pwm_Channel channel, uint32_t range)
