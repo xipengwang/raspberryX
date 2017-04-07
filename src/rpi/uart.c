@@ -117,7 +117,7 @@ int rpi_uart_receive(volatile rpi_uart_t* rpi_uart, char* rbuf, uint32_t len)
     }
     while(!rpi_uart->FR.bit.RXFE) {
         rbuf[RXCnt] = rpi_uart->DR.bit.DATA;
-        printf("ALERT: buffer remaining chars:%c \n", rbuf[RXCnt]);
+        printf("### ALERT: buffer remaining chars:%c ###\n", rbuf[RXCnt]);
     }
     return RXCnt;
 }
