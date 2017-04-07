@@ -1,9 +1,6 @@
 #ifndef _RPI_UART_H
 #define _RPI_UART_H
 
-#include "rpi.h"
-#include "gpio.h"
-
 typedef union{
     struct{
     	uint32_t UARTEN:1;
@@ -49,7 +46,6 @@ typedef union{
 #define RPI_UART_CR_CTSEN_Pos 15
 #define RPI_UART_CR_CTSEN_Msk 0x01 << RPI_UART_CR_CTSEN_Pos
 
-
 typedef union{
     struct{
         uint32_t CTS :1;
@@ -77,8 +73,6 @@ typedef union{
     } bit;
     uint32_t reg;
 } RPI_UART_DR_REG;//data register
-
-
 #define RPI_UART_DR_FE_Pos 8
 #define RPI_UART_DR_FE_Msk 0x01 << RPI_UART_DR_FE_Pos
 #define RPI_UART_DR_PE_Pos 9
@@ -95,7 +89,6 @@ typedef union{
     } bit;
     uint32_t reg;
 } RPI_UART_IBRD_REG; //integer part baudrate divisor
-
 
 typedef union{
     struct{
@@ -118,7 +111,6 @@ typedef union{
     } bit;
     uint32_t reg;
 } RPI_UART_LCRH_REG; //line control register
-
 
 typedef union{
     struct{
@@ -163,18 +155,18 @@ typedef struct{
 
 extern volatile rpi_uart_t *rpi_uart;
 
-int rpi_uart_init(volatile rpi_uart_t* rpi_uart);
-void rpi_uart_set_baudrate(volatile rpi_uart_t* rpi_uart, uint16_t baudrate);
-
-void rpi_uart_putc(volatile rpi_uart_t* rpi_uart, char c);
-void rpi_uart_transmit(volatile rpi_uart_t* rpi_uart, char* tbuf, uint32_t len);
-
-char rpi_uart_getc(volatile rpi_uart_t* rpi_uart);
-int rpi_uart_receive(volatile rpi_uart_t* rpi_uart, char* rbuf, uint32_t len);
-
 #ifdef cplusplus
 extern "C" {
 #endif
+
+    int rpi_uart_init(volatile rpi_uart_t* rpi_uart);
+    void rpi_uart_set_baudrate(volatile rpi_uart_t* rpi_uart, uint16_t baudrate);
+
+    void rpi_uart_putc(volatile rpi_uart_t* rpi_uart, char c);
+    void rpi_uart_transmit(volatile rpi_uart_t* rpi_uart, char* tbuf, uint32_t len);
+
+    char rpi_uart_getc(volatile rpi_uart_t* rpi_uart);
+    int rpi_uart_receive(volatile rpi_uart_t* rpi_uart, char* rbuf, uint32_t len);
 
 #ifdef cplusplus
 }

@@ -1,3 +1,4 @@
+#include "rpi.h"
 #include "uart.h"
 
 volatile rpi_uart_t *rpi_uart;

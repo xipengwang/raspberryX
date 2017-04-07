@@ -1,6 +1,7 @@
+#include "rpi.h"
 #include "systimer.h"
-volatile rpi_sys_timer_t *rpi_sys_timer;
 
+volatile rpi_sys_timer_t *rpi_sys_timer;
 void rpi_st_clr_status(Rpi_Sys_Timer timer)
 {
     rpi_sys_timer->CS.reg |= timer;

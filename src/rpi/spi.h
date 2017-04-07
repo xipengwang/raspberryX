@@ -1,9 +1,6 @@
 #ifndef _RPI_SPI_H
 #define _RPI_SPI_H
 
-#include "rpi.h"
-#include "gpio.h"
-
 typedef union {
     struct {
         uint32_t CS :2;

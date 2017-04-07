@@ -107,6 +107,7 @@ extern volatile rpi_gpio_t *rpi_gpio;
 #ifdef __cplusplus
 extern "C" {
 #endif
+
     void rpi_gpio_fsel(uint8_t pin, Rpi_Gpio_Function_Select mode);
 
     void rpi_gpio_write(uint8_t pin, uint8_t level);
@@ -129,6 +130,7 @@ extern "C" {
 
     void rpi_gpio_pud(Rpi_Gpio_Pud_Select mode);
     void rpi_gpio_pudclk(uint8_t pin);
+
 #ifdef __cplusplus
 }
 #endif
