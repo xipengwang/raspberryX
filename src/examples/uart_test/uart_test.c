@@ -25,11 +25,22 @@ int main(int argc, char **args)
     //change baudrate: default is 9600
     //rpi_uart_set_baudrate(rpi_uart, RPI_UART_BAUD_RATE_11520);
 
-    //send string
     while(1){
-    	char *buf = "Hello world!";
-    	rpi_uart_transmit(rpi_uart, buf, 12);
-        printf("Data %s \n", buf);
+        //send string
+        char *buf = "Hello-world!";
+        rpi_uart_transmit(rpi_uart, buf, 12);
+        printf("Send Data: %s \n", buf);
+
+        char c;
+        while ((c = rpi_uart_getc(rpi_uart))) {
+            printf("%c", c);
+        }
+        printf("\n");
+
+        /* char rbuf[15] = "\0"; */
+        /* rbuf[14] = '\0'; */
+        /* int len = rpi_uart_receive(rpi_uart, rbuf, 12); */
+        /* printf("Receive Data:%d, %s \n", len, rbuf); */
         timeutil_sleep(1);
     }
     return 0;

@@ -21,10 +21,12 @@ int rpi_uart_init(volatile rpi_uart_t *rpi_uart)
     rpi_uart->LCRH.bit.WLEN = 0x03; // 8bits data
     //enable FIFO
     rpi_uart->LCRH.bit.FEN = 1;
-    //transmit disable
+    //transmit enable
     rpi_uart->CR.bit.TXE = 1;
-    //receive disable
-    rpi_uart->CR.bit.RXE = 0;
+    //receive enable
+    rpi_uart->CR.bit.RXE = 1;
+    //CTS
+    rpi_uart->FR.bit.CTS = 1;
     //RTS
     rpi_uart->CR.bit.RTS = 1;
     //set freq
@@ -49,6 +51,13 @@ void rpi_uart_set_baudrate(volatile rpi_uart_t* rpi_uart, uint16_t baudrate)
     rpi_uart->CR.bit.UARTEN = 1;
 }
 
+void rpi_uart_putc(volatile rpi_uart_t* rpi_uart, char c)
+{
+    while(rpi_uart->FR.bit.TXFF);
+    rpi_uart->DR.reg = c;
+    while(rpi_uart->FR.bit.BUSY);
+}
+
 void rpi_uart_transmit(volatile rpi_uart_t* rpi_uart, char* tbuf, uint32_t len)
 {
     uint32_t TXCnt =0;
@@ -62,26 +71,49 @@ void rpi_uart_transmit(volatile rpi_uart_t* rpi_uart, char* tbuf, uint32_t len)
     while(rpi_uart->FR.bit.BUSY);
 }
 
-void rpi_uart_receive(volatile rpi_uart_t* rpi_uart, char* rbuf, uint32_t len)
+char rpi_uart_getc(volatile rpi_uart_t* rpi_uart)
+{
+    char c = '\0';
+    if(!rpi_uart->FR.bit.RXFE) {
+         c = rpi_uart->DR.bit.DATA;
+        /* if (rpi_uart->DR.bit.FE) { */
+        /*     printf("frame error\n"); */
+        /* } */
+        /* if (rpi_uart->DR.bit.PE) { */
+        /*     printf("parity error\n"); */
+        /* } */
+        /* if (rpi_uart->DR.bit.BE) { */
+        /*     printf("break error\n"); */
+        /* } */
+        /* if (rpi_uart->DR.bit.OE) { */
+        /*     printf("Overrun error\n"); */
+        /* } */
+    }
+    return c;
+}
+
+int rpi_uart_receive(volatile rpi_uart_t* rpi_uart, char* rbuf, uint32_t len)
 {
     uint32_t RXCnt = 0;
-
-    while(RXCnt < len){
-        if(!rpi_uart->FR.bit.RXFF){
-            rbuf[RXCnt] = rpi_uart->DR.bit.DATA;
-            RXCnt++;
-            if (rpi_uart->DR.bit.FE) {
-                printf("frame error\n");
-            }
-            if (rpi_uart->DR.bit.PE) {
-                printf("parity error\n");
-            }
-            if (rpi_uart->DR.bit.BE) {
-                printf("break error\n");
-            }
-            if (rpi_uart->DR.bit.OE) {
-                printf("Overrun error\n");
-            }
-        }
+    while(RXCnt < len && !rpi_uart->FR.bit.RXFE){
+        rbuf[RXCnt] = rpi_uart->DR.bit.DATA;
+        RXCnt++;
+        /* if (rpi_uart->DR.bit.FE) { */
+        /*     printf("frame error\n"); */
+        /* } */
+        /* if (rpi_uart->DR.bit.PE) { */
+        /*     printf("parity error\n"); */
+        /* } */
+        /* if (rpi_uart->DR.bit.BE) { */
+        /*     printf("break error\n"); */
+        /* } */
+        /* if (rpi_uart->DR.bit.OE) { */
+        /*     printf("Overrun error\n"); */
+        /* } */
     }
+    while(!rpi_uart->FR.bit.RXFE) {
+        rbuf[RXCnt] = rpi_uart->DR.bit.DATA;
+        printf("ALERT: buffer remaining chars:%c \n", rbuf[RXCnt]);
+    }
+    return RXCnt;
 }

@@ -156,8 +156,12 @@ extern volatile rpi_uart_t *rpi_uart;
 
 int rpi_uart_init(volatile rpi_uart_t* rpi_uart);
 void rpi_uart_set_baudrate(volatile rpi_uart_t* rpi_uart, uint16_t baudrate);
+
+void rpi_uart_putc(volatile rpi_uart_t* rpi_uart, char c);
 void rpi_uart_transmit(volatile rpi_uart_t* rpi_uart, char* tbuf, uint32_t len);
-void rpi_uart_receive(volatile rpi_uart_t* rpi_uart, char* rbuf, uint32_t len);
+
+char rpi_uart_getc(volatile rpi_uart_t* rpi_uart);
+int rpi_uart_receive(volatile rpi_uart_t* rpi_uart, char* rbuf, uint32_t len);
 
 #ifdef cplusplus
 extern "C" {
