@@ -19,6 +19,7 @@ int main(int argc, char **argv)
     if(rpi_spi_init(rpi_spi0))
         return 0;
 
+    //Set UP SPI PINs.
     rpi_gpio_fsel(PIN_26, RPI_GPIO_FSEL_ALT0); /* CE1 */
     rpi_gpio_fsel(PIN_24, RPI_GPIO_FSEL_ALT0); /* CE0 */
     rpi_gpio_fsel(PIN_21, RPI_GPIO_FSEL_ALT0); /* MISO */

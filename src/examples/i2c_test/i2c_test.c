@@ -40,14 +40,18 @@
 
 //example: BMP180
 
+//This function read a byte back from the register address specified by buf.
 uint8_t read_8(volatile rpi_i2c_t *rpi_i2c, char *buf);
+
+//This function read two byte back from the register address specified by buf.
 uint16_t read_16(volatile rpi_i2c_t *rpi_i2c, char *buf);
+
+//Get the calibration value of the sensor.
 void get_cal(volatile rpi_i2c_t *rpi_i2c, uint16_t *cal_AC1, uint16_t *cal_AC2, uint16_t *cal_AC3,
              uint16_t *cal_AC4, uint16_t *cal_AC5, uint16_t *cal_AC6,
              uint16_t *cal_B1, uint16_t *cal_B2,
              uint16_t *cal_MB, uint16_t *cal_MC, uint16_t *cal_MD);
 
-#define pin_out PIN_07
 int main(int argc, char **args)
 {
     print_marker("XRobot","Hello World!");
@@ -55,9 +59,10 @@ int main(int argc, char **args)
         print_version();
         rpi_gpio_fsel(pin_out, RPI_GPIO_FSEL_OUT);
 
-        //i2c test
+        //Set up the PIN functions. This is important!!!!!
         rpi_gpio_fsel(PIN_03, RPI_GPIO_FSEL_ALT0); /* SDA */
         rpi_gpio_fsel(PIN_05, RPI_GPIO_FSEL_ALT0); /* SCL */
+
         if(rpi_i2c_init(rpi_i2c1)) {
             printf("I2C error \n");
             exit(-1);
@@ -73,6 +78,7 @@ int main(int argc, char **args)
         double i2c_bytes_wait_us = len *
             ((float)rpi_i2c1->DIV.bit.CDIV / RPI_CORE_CLK_HZ) * 1000000 * 9;
 
+        /* Basic example demonstrating using rpi_i2c_write and rpi_i2c_read */
         //Write register address 0xD0
         int w_return = rpi_i2c_write(rpi_i2c1, buf, len);
         if(w_return == RPI_I2C_OK){
@@ -97,6 +103,8 @@ int main(int argc, char **args)
             printf("DATA REMAINING\n");
         }
         timeutil_usleep(i2c_bytes_wait_us);
+
+        /* Example demonstrating interacting with BMP180 to get temperature and pressure */
 
         //soft reset
         //char reset[2] = {0xE0, 0xB6};
@@ -179,14 +187,7 @@ int main(int argc, char **args)
         double pressure = p * 0.01;
         printf("pressure %fhPa \n", pressure);
 
-        //rpi_i2c_close(PIN_03, PIN_05);
-
-        /* while(1) { */
-        /*     rpi_gpio_write(pin_out, 0); */
-        /*     timeutil_usleep(100000); */
-        /*     rpi_gpio_write(pin_out, 1); */
-        /*     timeutil_usleep(100000); */
-        /* } */
+        rpi_i2c_close(PIN_03, PIN_05);
     }
 
 

@@ -4,8 +4,14 @@
 #include <string.h>
 #include <math.h>
 
+//This includes print_util functions in common library.
 #include "common/print_util.h"
+
+//This includes time_util functions in common library.
+//Now you can use all functions in the time_util.h
 #include "common/time_util.h"
+
+//This include all rpi library functions such as pwm, i2c, spi, uart, etc.
 #include "rpi/rpi_all.h"
 
 
