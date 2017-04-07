@@ -22,8 +22,8 @@
 #define HIGH 0x01
 #define LOW  0x00
 
-//RPI properties
-#define RPI_CORE_CLK_HZ        250000000
+//RPI peripheral addresses
+#define RPI_CORE_CLK_HZ        250000000 //NOTE: UART0 use UART_CLK_HZ = 50000000
 #define RPI_GPIO_BASE          0x200000
 #define RPI_SYS_TIMER          0x3000
 #define RPI_PWM                0x20C000
@@ -32,6 +32,7 @@
 #define RPI_I2C1               0x804000
 #define RPI_SPI0               0x204000
 #define RPI_UART               0x201000
+
 #ifdef __cplusplus
 extern "C" {
 #endif
