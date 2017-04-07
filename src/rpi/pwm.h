@@ -1,10 +1,6 @@
 #ifndef _RPI_PWM_H
 #define _RPI_PWM_H
 
-#include "rpi.h"
-#include "gpio.h"
-#include "common/time_util.h"
-
 #define RPI_PWM_PASSWD (0x5a<<24)
 
 typedef union {
@@ -102,7 +98,6 @@ typedef struct {
     __IO RPI_PWM_SHARE_REG DAT2;
 } rpi_pwm_t;
 
-
 typedef union {
     struct {
         uint32_t SRC  :4;
@@ -138,14 +133,11 @@ extern volatile rpi_pwm_clk_t *rpi_pwm_clk;
 #ifdef __cplusplus
 extern "C" {
 #endif
+
     int pwm_init(Rpi_Pwm_Channel channel, uint8_t markspace, uint8_t enable);
-
     void pwm_set_clock(uint32_t divisor);
-
     void pwm_set_range(Rpi_Pwm_Channel channel, uint32_t range);
-
     void pwm_set_data(Rpi_Pwm_Channel channel, uint32_t data);
-
     void pwm_close(Rpi_Pwm_Channel channel);
 
 #ifdef __cplusplus

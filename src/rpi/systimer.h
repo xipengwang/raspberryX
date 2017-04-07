@@ -1,8 +1,6 @@
 #ifndef _RPI_SYSTIMER_H
 #define _RPI_SYSTIMER_H
 
-#include "rpi.h"
-
 typedef enum {
     SYSTEM_TIMER_M0 = 0x01,
     SYSTEM_TIMER_M1 = 0x02,
@@ -37,6 +35,7 @@ extern volatile rpi_sys_timer_t *rpi_sys_timer;
 #ifdef __cplusplus
 extern "C" {
 #endif
+
     void rpi_st_clr_status(Rpi_Sys_Timer timer);
     uint32_t rpi_st_get_status(Rpi_Sys_Timer timer);
     void rpi_st_set_cmp(Rpi_Sys_Timer timer, uint32_t value);

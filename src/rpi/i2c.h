@@ -3,12 +3,9 @@
 /*
   Add "dtparam=i2c_vc=on" to /boot/config.txt;
   So you can see both i2c0 and i2c1 interface.
-
   However, be aware that i2c0 or i2c1 may not work. Use oscilloscope to check the clock signals.
  */
 
-#include "rpi.h"
-#include "gpio.h"
 
 typedef enum {
     RPI_I2C_OK = 0,
@@ -65,8 +62,6 @@ typedef union {
     } bit;
     uint32_t reg;
 } RPI_I2C_S_REG;
-
-
 #define RPI_I2C_S_CLKT_Pos 9
 #define RPI_I2C_S_CLKT_Msk 1 << RPI_I2C_S_CLKT_Pos
 #define RPI_I2C_S_ERR_Pos 8
@@ -128,7 +123,6 @@ typedef union {
     uint32_t reg;
 } RPI_I2C_DEL_REG;
 
-
 typedef union {
     struct {
         uint32_t TOUT :16;
@@ -161,7 +155,6 @@ extern "C" {
      * @return Return 0 on success
      */
     int rpi_i2c_init(volatile rpi_i2c_t *rpi_i2c);
-
     void rpi_i2c_close(Rpi_Gpio_Pin SDA_PIN, Rpi_Gpio_Pin SCL_PIN);
     void rpi_i2c_setslave(volatile rpi_i2c_t *i2c, uint8_t addr);
     void rpi_i2c_setclockdivider(volatile rpi_i2c_t *i2c, uint16_t divider);
