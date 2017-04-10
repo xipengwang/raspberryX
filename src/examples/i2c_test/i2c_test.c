@@ -57,8 +57,6 @@ int main(int argc, char **args)
     print_marker("XRobot","Hello World!");
     if(rpi_init() != -1){
         print_version();
-        rpi_gpio_fsel(pin_out, RPI_GPIO_FSEL_OUT);
-
         //Set up the PIN functions. This is important!!!!!
         rpi_gpio_fsel(PIN_03, RPI_GPIO_FSEL_ALT0); /* SDA */
         rpi_gpio_fsel(PIN_05, RPI_GPIO_FSEL_ALT0); /* SCL */
