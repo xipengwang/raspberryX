@@ -22,12 +22,12 @@ int main(int argc, char **args)
     //Default baudrate is 9600 bits/s
     rpi_uart_init(rpi_uart);
 
+    //send string
+    char *buf = "AT+NAME?";
+    rpi_uart_transmit(rpi_uart, buf, strlen(buf));
+    printf("Send string:  %s \n", buf);
+    sleep(3);
     while(1){
-        //send string
-        char *buf = "AT+ADDR?";
-        rpi_uart_transmit(rpi_uart, buf, strlen(buf));
-        printf("Send string:  %s \n", buf);
-
         //receive string character by character
         printf("Received string:  ");
         char c;
@@ -35,7 +35,7 @@ int main(int argc, char **args)
             printf("%c", c);
         }
         printf("\n");
-
+        sleep(1);
     }
     return 0;
 }
