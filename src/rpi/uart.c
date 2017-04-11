@@ -77,7 +77,7 @@ char rpi_uart_getc(volatile rpi_uart_t* rpi_uart)
     char c = '\0';
     uint32_t dr;
     if(!rpi_uart->FR.bit.RXFE) {
-        dr = rpi_uart->DR.bit.DATA;
+        dr = rpi_uart->DR.reg;
         c = 0xFF & dr;
         if (dr & RPI_UART_DR_FE_Msk) {
             printf("ALERT: frame error\n");
@@ -100,7 +100,7 @@ int rpi_uart_receive(volatile rpi_uart_t* rpi_uart, char* rbuf, uint32_t len)
     uint32_t RXCnt = 0;
     uint32_t dr;
     while(RXCnt < len && !rpi_uart->FR.bit.RXFE){
-        dr = rpi_uart->DR.bit.DATA;
+        dr = rpi_uart->DR.reg;
         rbuf[RXCnt] = 0xFF & dr;
         RXCnt++;
         if (dr & RPI_UART_DR_FE_Msk) {

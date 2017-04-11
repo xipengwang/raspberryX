@@ -16,4 +16,4 @@ $(BIN_PATH)/spi-test: spi_test.o $(DEPS)
 	@$(LD) -o $@ $^ $(LDFLAGS)
 
 clean:
-	@rm -rf *.o $(TARGET)
+	@rm -rf *.o $(BIN_PATH)/mfrc522-test $(BIN_PATH)/spi-test
