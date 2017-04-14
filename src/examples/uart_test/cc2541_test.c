@@ -48,6 +48,20 @@ int main(int argc, char **args)
     }
 
     {
+        //set name
+        char *buf = "AT+ROBOTX";
+        rpi_uart_transmit(rpi_uart, buf, strlen(buf));
+        sleep(1);
+        printf("Device name:  ");
+        char c;
+        while ((c = rpi_uart_getc(rpi_uart))) {
+            printf("%c", c);
+        }
+        printf("\n");
+    }
+
+    {
+        //check mac address
         char *buf = "AT+ADDR?";
         rpi_uart_transmit(rpi_uart, buf, strlen(buf));
         sleep(1);
@@ -58,9 +72,45 @@ int main(int argc, char **args)
         }
         printf("\n");
     }
-    //check mac address
 
+    {
+        //check type
+        char *buf = "AT+TYPE?";
+        rpi_uart_transmit(rpi_uart, buf, strlen(buf));
+        sleep(1);
+        printf("Device Type:  ");
+        char c;
+        while ((c = rpi_uart_getc(rpi_uart))) {
+            printf("%c", c);
+        }
+        printf("\n");
+    }
 
+    {
+        //Set as type 2 to require passwd; if TYPE0, then no passwd need for connection
+        char *buf = "AT+TYPE2";
+        rpi_uart_transmit(rpi_uart, buf, strlen(buf));
+        sleep(1);
+        printf("Device Type:  ");
+        char c;
+        while ((c = rpi_uart_getc(rpi_uart))) {
+            printf("%c", c);
+        }
+        printf("\n");
+    }
+
+    {
+        //Set passwd as 666666
+        char *buf = "AT+PASS666666";
+        rpi_uart_transmit(rpi_uart, buf, strlen(buf));
+        sleep(1);
+        printf("Passwd:  ");
+        char c;
+        while ((c = rpi_uart_getc(rpi_uart))) {
+            printf("%c", c);
+        }
+        printf("\n");
+    }
 
     while(1){
         //receive string character by character
@@ -70,6 +120,8 @@ int main(int argc, char **args)
             printf("%c", c);
         }
         printf("\n");
+        char *buf = "Hello World";
+        rpi_uart_transmit(rpi_uart, buf, strlen(buf));
         sleep(1);
     }
     return 0;
