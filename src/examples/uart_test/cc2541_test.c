@@ -48,6 +48,19 @@ int main(int argc, char **args)
     }
 
     {
+        //set name
+        char *buf = "AT+ROBOTX";
+        rpi_uart_transmit(rpi_uart, buf, strlen(buf));
+        sleep(1);
+        printf("Device name:  ");
+        char c;
+        while ((c = rpi_uart_getc(rpi_uart))) {
+            printf("%c", c);
+        }
+        printf("\n");
+    }
+
+    {
         //check mac address
         char *buf = "AT+ADDR?";
         rpi_uart_transmit(rpi_uart, buf, strlen(buf));
