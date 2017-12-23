@@ -1,0 +1,6 @@
+struct drive_t
+{
+	int64_t utime;
+
+	double  throttle;         // [-1, 1]
+}
