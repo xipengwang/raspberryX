@@ -11,12 +11,12 @@ LCMTYPES_O     := $(LCMTYPES:%.lcm=%.o)
 %.c %.h : $(LCMTYPES_DIR)/%.lcm
 	@lcm-gen -c $< --cinclude lcmtypes/
 
-CFLAGS := $(CFLAGS_STD) $(CFLAGS_LCMTYPES)
-LDFLAGS := $(LDFLAGS_STD) $(LDFLAGS_LCMTYPES)
+CFLAGS := $(CFLAGS_STD) -I.. $(CFLAGS_LCM)
+LDFLAGS := $(LDFLAGS_STD) $(LDFLAGS_LCM)
 
 include $(BUILD_COMMON)
 
-all: $(LCMTYPES_C) $(LCMTYPES_H)
+all: $(LCMTYPES_C) $(LCMTYPES_H) $(LIB_PATH)/librobotxlcmtypes.a
 	@/bin/true
 
 $(LIB_PATH)/librobotxlcmtypes.a: $(LCMTYPES_H) $(LCMTYPES_O)

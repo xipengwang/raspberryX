@@ -7,7 +7,6 @@ export DEPS_LCMTYPES = $(LIB_PATH)/librobotxlcmtypes.a $(DEPS_LCM)
 lcmtypes:
 
 lcmtypes:
-	@echo $(CFLAGS_LCM)
 	@echo $@
 	@$(MAKE) -C $(ROOT_PATH)/src/lcmtypes -f Build.mk
 
