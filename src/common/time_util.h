@@ -26,7 +26,7 @@ extern "C" {
 
     int32_t  timeutil_usleep(int64_t useconds);
     uint32_t timeutil_sleep(unsigned int seconds);
-    int32_t  timeutil_running_hz(timeutil_rest_t *rest, double hz);
+    int32_t timeutil_sleep_hz(timeutil_rest_t *rest, double hz);
 
 #ifdef __cplusplus
 }

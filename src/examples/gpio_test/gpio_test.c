@@ -37,7 +37,7 @@ int main(int argc, char **args)
 
     // Configure pin_in as input pin
     rpi_gpio_fsel(pin_in, RPI_GPIO_FSEL_IN);
-    rpi_gpio_fsel(pin_in, RPI_GPIO_FSEL_IN);
+    rpi_gpio_fsel(pin_event, RPI_GPIO_FSEL_IN);
 
     // Configure pin_out as output pin.
     rpi_gpio_fsel(pin_out, RPI_GPIO_FSEL_OUT);
@@ -59,12 +59,14 @@ int main(int argc, char **args)
     timeutil_usleep(100000);
 
     while(1) {
-        timeutil_usleep(10);
+        rpi_gpio_write(pin_out, HIGH);
+        timeutil_usleep(10e3);
+        rpi_gpio_write(pin_out, LOW);
         // Check the event, if the rising edge event on pin_event happens,
         // we print out something.
-        if (rpi_gpio_status(pin_event)) {
-            printf("Capture the pin rising event \n");
-        }
+//        if (rpi_gpio_status(pin_event)) {
+//            printf("Capture the pin rising event \n");
+//        }
     }
     return 0;
 }
