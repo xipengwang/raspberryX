@@ -60,8 +60,9 @@ int main(int argc, char **args)
 
     while(1) {
         rpi_gpio_write(pin_out, HIGH);
-        timeutil_usleep(10e3);
+        timeutil_usleep(100e3);
         rpi_gpio_write(pin_out, LOW);
+        timeutil_usleep(100e3);
         // Check the event, if the rising edge event on pin_event happens,
         // we print out something.
 //        if (rpi_gpio_status(pin_event)) {
