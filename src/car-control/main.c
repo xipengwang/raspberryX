@@ -76,29 +76,33 @@ int main(int argc, char ** argv)
         return -1;
     }
 
-    state_t state;
-    state.lcm = lcm_create(LCM_URL);
-    if(!state.lcm)
+    state_t *state = calloc(1, sizeof(state_t));
+    state->lcm = lcm_create(LCM_URL);
+    if(!state->lcm)
         exit(-1);
-
     rpi_gpio_fsel(pin_redA, RPI_GPIO_FSEL_OUT);
     rpi_gpio_fsel(pin_redB, RPI_GPIO_FSEL_OUT);
     rpi_gpio_fsel(pin_yellowA, RPI_GPIO_FSEL_OUT);
     rpi_gpio_fsel(pin_yellowB, RPI_GPIO_FSEL_OUT);
+    rpi_gpio_write(pin_redA, HIGH);
+    rpi_gpio_write(pin_redB, HIGH);
+    rpi_gpio_write(pin_yellowA, HIGH);
+    rpi_gpio_write(pin_yellowB, HIGH);
+    usleep(2e6);
     rpi_gpio_write(pin_redA, LOW);
     rpi_gpio_write(pin_redB, LOW);
     rpi_gpio_write(pin_yellowA, LOW);
     rpi_gpio_write(pin_yellowB, LOW);
 
-    pthread_mutex_init(&state.lock, NULL);
-    drive_t_subscribe(state.lcm, DRIVE_T_CHANNEL, &drive_handler, NULL);
+    pthread_mutex_init(&state->lock, NULL);
+    drive_t_subscribe(state->lcm, DRIVE_T_CHANNEL, &drive_handler, state);
     pthread_t control_thread;
-    pthread_create(&control_thread, NULL, on_control, &state);
+    pthread_create(&control_thread, NULL, on_control, state);
 
     while(1) {
-        lcm_handle(state.lcm);
+        lcm_handle(state->lcm);
     }
 
-    lcm_destroy(state.lcm);
+    lcm_destroy(state->lcm);
     return 0;
 }
