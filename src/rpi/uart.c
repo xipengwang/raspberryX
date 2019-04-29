@@ -18,7 +18,6 @@
 #include "rpi.h"
 #include "uart.h"
 
-volatile rpi_uart_t *rpi_uart;
 
 int rpi_uart_init(volatile rpi_uart_t *rpi_uart)
 {

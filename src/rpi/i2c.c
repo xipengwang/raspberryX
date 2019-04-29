@@ -19,9 +19,6 @@
 #include "gpio.h"
 #include "i2c.h"
 
-volatile rpi_i2c_t *rpi_i2c0;
-volatile rpi_i2c_t *rpi_i2c1;
-
 int rpi_i2c_init(volatile rpi_i2c_t *i2c)
 {
     if (i2c == MAP_FAILED) {

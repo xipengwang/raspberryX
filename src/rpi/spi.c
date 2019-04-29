@@ -19,7 +19,6 @@
 #include "gpio.h"
 #include "spi.h"
 
-volatile rpi_spi_t *rpi_spi0;
 
 int rpi_spi_init(volatile rpi_spi_t *rpi_spi0)
 {

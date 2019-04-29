@@ -10,7 +10,7 @@ include $(BUILD_COMMON)
 
 
 all: $(TARGET)
-	@/bin/true
+	@/usr/bin/true
 
 $(TARGET): $(OBJS) $(DEPS)
 	@$(LD) -o $@ $^ $(LDFLAGS)

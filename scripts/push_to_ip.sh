@@ -8,6 +8,7 @@ STAGE=/tmp/robotx_stage
 rm -rf $STAGE
 mkdir -p $STAGE/robotx/bin $STAGE/robotx/config $STAGE/robotx/scripts \
 
-cp -R $ROBOTX/bin $ROBOTX/config $ROBOTX/scripts $STAGE/robotx
+# cp -R $ROBOTX/bin $ROBOTX/config $ROBOTX/scripts $STAGE/robotx
+cp -R $ROBOTX/* $STAGE/robotx
 
 rsync -rzP --delete $STAGE/robotx $REMOTE_USER@$IP:/home/$REMOTE_USER/

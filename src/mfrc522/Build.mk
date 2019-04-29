@@ -10,7 +10,7 @@ HDEPS := $(HEADERS)
 include $(BUILD_COMMON)
 
 all: $(LIB_PATH)/libmfrc522.a
-	@/bin/true
+	@/usr/bin/true
 
 $(LIB_PATH)/libmfrc522.a: $(OBJS) $(DEPS)
 	@$(AR) rc $@ $^
