@@ -18,7 +18,6 @@
 #include "rpi.h"
 #include "gpio.h"
 
-volatile rpi_gpio_t *rpi_gpio;
 void rpi_gpio_fsel(uint8_t pin, Rpi_Gpio_Function_Select mode)
 {
     uint8_t shift = (pin % 10) * 3;

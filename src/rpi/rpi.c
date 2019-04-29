@@ -36,6 +36,20 @@ uint32_t *rpi_peripherals_base;
 uint32_t rpi_peripherals_size;
 uint32_t *rpi_peripherals;
 
+volatile rpi_i2c_t *rpi_i2c0;
+volatile rpi_i2c_t *rpi_i2c1;
+
+volatile rpi_pwm_t *rpi_pwm;
+volatile rpi_pwm_clk_t* rpi_pwm_clk;
+
+volatile rpi_spi_t *rpi_spi0;
+
+volatile rpi_uart_t *rpi_uart;
+
+volatile rpi_sys_timer_t *rpi_sys_timer;
+
+volatile rpi_gpio_t *rpi_gpio;
+
 static void *mapmem(const char *msg, size_t size, int fd, off_t off);
 static void unmapmem(void **pmem, size_t size);
 

@@ -8,7 +8,7 @@ include $(BUILD_COMMON)
 
 
 all: $(BIN_PATH)/uart-test $(BIN_PATH)/cc2541-test
-	@/bin/true
+	@/usr/bin/true
 
 $(BIN_PATH)/uart-test: uart_test.o $(DEPS)
 	@$(LD) -o $@ $^ $(LDFLAGS)

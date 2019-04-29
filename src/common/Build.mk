@@ -10,10 +10,10 @@ HDEPS := $(HEADERS)
 include $(BUILD_COMMON)
 
 all: $(LIB_PATH)/libcommon.a
-	@/bin/true
+	@/usr/bin/true
 
 $(LIB_PATH)/libcommon.a: $(OBJS) $(DEPS)
-	@$(AR) rc $@ $^
+	@$(AR) rcs $@ $^
 
 clean:
 	@rm -rf *.o $(LIB_PATH)/libcommon.a

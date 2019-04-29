@@ -6,7 +6,7 @@ include $(BUILD_COMMON)
 
 
 all: $(BIN_PATH)/mfrc522-test $(BIN_PATH)/spi-test
-	@/bin/true
+	@/usr/bin/true
 
 
 $(BIN_PATH)/mfrc522-test: mfrc522_test.o $(DEPS) $(DEPS_MFRC522)

@@ -20,8 +20,6 @@
 #include "rpi.h"
 #include "gpio.h"
 #include "pwm.h"
-volatile rpi_pwm_t *rpi_pwm;
-volatile rpi_pwm_clk_t* rpi_pwm_clk;
 
 int pwm_init(Rpi_Pwm_Channel channel, uint8_t markspace, uint8_t enable)
 {
