@@ -2,4 +2,6 @@ struct drive_t
 {
 	int64_t utime;
 	double  throttle;         // [-1, 1]
+	double  steering;         // [-1, 1]
+    boolean enable;
 }

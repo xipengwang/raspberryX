@@ -17,7 +17,7 @@ LDFLAGS := $(LDFLAGS_STD) $(LDFLAGS_LCM)
 include $(BUILD_COMMON)
 
 all: $(LCMTYPES_C) $(LCMTYPES_H) $(LIB_PATH)/librobotxlcmtypes.a
-	@/bin/true
+	@/usr/bin/true
 
 $(LIB_PATH)/librobotxlcmtypes.a: $(LCMTYPES_H) $(LCMTYPES_O)
 	@$(AR) rc $@ $(LCMTYPES_O)
