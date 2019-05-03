@@ -13,6 +13,7 @@ typedef struct state state_t;
 struct state {
     lcm_t *lcm;
     double steering;
+    double throttle;
     pthread_mutex_t lock;
 };
 
@@ -22,25 +23,23 @@ static void drive_handler(const lcm_recv_buf_t *rbuf, const char * channel,
     state_t *state = user;
     pthread_mutex_lock(&state->lock);
     state->steering = msg->steering;
+    state->throttle = msg->throttle;
+    double steering = state->steering;
     pthread_mutex_unlock(&state->lock);
+    int leftMost = 100*6;
+    int rightMost = 100*12;
+    pwm_set_data(0, (uint32_t)(100*6 + (1+steering)*100*3));
 }
 
 void * on_control(void* user)
 {
     state_t *state= user;
-    while(1)
+    while(0)
     {
         double steering;
         pthread_mutex_lock(&state->lock);
         steering = state->steering;
         pthread_mutex_unlock(&state->lock);
-        printf("Steering:%f\n", steering);
-        // Set PWM Frequency = 19.2Mhz / 16 / 1000 = 600Hz
-        // pwm_set_range(0, 1000);
-        pwm_set_range(0, 1000*12); // 50HZ
-
-        // Set PWM duty cycle as 800 / 1000 = 80%
-        // pwm_set_data(0, 800);
         int leftMost = 100*6;
         int rightMost = 100*12;
         pwm_set_data(0, (uint32_t)(100*6 + (1+steering)*100*3));
@@ -66,6 +65,8 @@ int main(int argc, char ** argv)
         exit(-1);
     }
     pwm_set_clock(32);
+    // Set PWM Frequency = 19.2Mhz / 32 / 12000 = 50Hz
+    pwm_set_range(0, 12000); // 50HZ
 
     pthread_mutex_init(&state->lock, NULL);
     drive_t_subscribe(state->lcm, DRIVE_T_CHANNEL, &drive_handler, state);

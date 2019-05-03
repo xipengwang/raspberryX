@@ -61,13 +61,10 @@ int main(int argc, char **args)
     // Configure PWM clock = 19.2Mhz / 32 = 600kHz
     pwm_set_clock(32);
 
-    // Set PWM Frequency = 19.2Mhz / 16 / 1000 = 600Hz
-    // pwm_set_range(0, 1000);
-    pwm_set_range(0, 1000*12); // 50HZ
+    // Set PWM Frequency = 19.2Mhz / 32 / 1000 = 600Hz
+    pwm_set_range(0, 1000);
 
     // Set PWM duty cycle as 800 / 1000 = 80%
-    // pwm_set_data(0, 800);
-    pwm_set_data(0, 1000*12/2); // 5%
-
+    pwm_set_data(0, 800);
     return 0;
 }
